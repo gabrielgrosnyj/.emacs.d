@@ -217,6 +217,9 @@
   (when (and (eq 'windows-nt system-type)
   	     (file-readable-p cygwin-root))
 
+    (setenv "PATH" (concat cygwin-bin ";" 
+                           (getenv "PATH")))
+
     ;; (setq exec-path (cons "e:/dev/msysgit/bin" exec-path))
     (setq exec-path (cons cygwin-bin exec-path))
     ;; (setq exec-path (cons "C:/Python27" exec-path))
