@@ -1,0 +1,11 @@
+all: test
+
+test: testproject
+    cp ${1:../../../}lib/nunit.framework.dll .
+    fnunit-console-x86.exe /framework=net-4.0 ${2:TestModule}.dll
+
+testproject: project
+    csc /t:library /debug $2.cs /reference:$1Lib/nunit.framework.dll,../../bin/Debug/${3:Module}.dll
+
+project:
+    MSBuild.exe ../../$3.csproj

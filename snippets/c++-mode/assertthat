@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name : assertthat
+# key: assertthat
+# --
+AssertThat(${1:<test>}, Equals(${2:0}));$0

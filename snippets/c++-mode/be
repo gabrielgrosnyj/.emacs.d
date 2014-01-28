@@ -1,0 +1,7 @@
+#name : before_each ... 
+# --
+before_each(
+    []()
+    {   
+        $0
+    });

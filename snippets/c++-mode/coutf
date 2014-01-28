@@ -1,0 +1,3 @@
+#name : coutf ... 
+# --
+std::cout << ${1:__FUNCTION__} << std::endl; $0

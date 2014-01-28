@@ -1,0 +1,1120 @@
+(prefer-coding-system 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+
+(require 'org-install)
+(require 'org-latex)
+
+(setq user-full-name "Stefán Pétursson")
+(setq org-export-latex-format-toc-function (lambda (bla)))
+(add-to-list 'org-export-latex-classes
+  '("stp-org-article"
+"\\documentclass[11pt,a4paper]{article}
+\\usepackage{fontspec}
+\\usepackage{graphicx} 
+\\usepackage{hyperref}
+\\defaultfontfeatures{Mapping=tex-text}
+\\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
+\\usepackage{geometry}
+\\geometry{a4paper, textwidth=6.5in, textheight=10in,
+            marginparsep=7pt, marginparwidth=.6in}
+\\pagestyle{empty}
+\\title{}
+      [NO-DEFAULT-PACKAGES]
+      [NO-PACKAGES]"
+     ("\\section{%s}" . "\\section*{%s}")
+     ("\\subsection{%s}" . "\\subsection*{%s}")
+     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(setq org-latex-to-pdf-process 
+  '("xelatex -interaction nonstopmode %f"
+     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+
+;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+  '( (ditaa . t)         
+     (emacs-lisp . t)   
+   ))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(blink-cursor-mode nil)
+ '(column-number-mode t)
+ ;; '(cua-mode t nil (cua-base))
+ '(custom-safe-themes (quote ("501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" "72cc9ae08503b8e977801c6d6ec17043b55313cda34bcf0e6921f2f04cf2da56" default)))
+ '(display-time-mode t)
+ '(initial-buffer-choice "~/organize.org")
+ '(menu-bar-mode nil)
+ '(show-paren-mode t)
+ '(ring-bell-function 'ignore)
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "outline" :family "Consolas"))))
+ '(match ((t (:foreground "LightSalmon"))))
+ '(yas/field-highlight-face ((t (:background "#101010")))))
+
+(setq indicate-empty-lines t)
+(setq system-time-locale "C")
+
+;; (setq grep-hit-face font-lock-type-face) ;; font-lock-keyword-face)
+(setq grep-hit-face  font-lock-keyword-face)
+
+(setq column-number-mode t)
+(setq nxml-slash-auto-complete-flag t)
+
+(require 'cl)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+(setq confirm-kill-emacs 'yes-or-no-p)
+
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+(global-auto-revert-mode)
+
+(put 'dired-find-alternate-file 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'set-goal-column 'disabled nil)
+
+(put 'upcase-region 'disabled nil)
+;; (require 'dired+)
+(put 'narrow-to-region 'disabled nil)
+(global-subword-mode)
+
+(define-key isearch-mode-map (kbd "C-o")
+  (lambda ()
+    (interactive)
+    (let ((case-fold-search isearch-case-fold-search))
+      (occur (if isearch-regexp isearch-string
+               (regexp-quote isearch-string))))))
+
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(toggle-scroll-bar -1)
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+
+(defun coding-utf-stuff()
+  (setq locale-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-language-environment 'UTF-8) ; prefer utf-8 for language settings
+  (setq read-quoted-char-radix 10) ; use decimal, not octal
+ ;; http://chopmode.wordpress.com/2009/03/04/changing-text-encoding-in-emacs/
+  )
+
+(defun three-quarters-window ()
+  "Resizes current window big"
+  (interactive)
+  (let ((size (- (truncate (* .75 (frame-height))) (window-height))))
+    (if (> size 0)
+        (enlarge-window size))))
+
+(setq backup-directory-alist
+	  `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+	  `((".*" ,temporary-file-directory t)))
+
+;; (setq-default ispell-program-name "c:/cygwin/bin/aspell")
+
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-saved-items 500)
+(setq recentf-max-menu-items 20)
+(global-set-key [(meta f12)] 'recentf-open-files)
+
+(defun xsteve-ido-choose-from-recentf ()
+  "Use ido to select a recently opened file from the `recentf-list'"
+  (interactive)
+  (let ((home (expand-file-name (getenv "HOME"))))
+    (find-file
+     (ido-completing-read "Recentf open: "
+			  (mapcar (lambda (path)
+				    (replace-regexp-in-string home "~" path))
+				  recentf-list)
+			  nil t))))
+
+(global-set-key (kbd "C-x C-r") 'xsteve-ido-choose-from-recentf)
+
+(defun fix-endings ()
+  (interactive)
+  (set-buffer-process-coding-system 'undecided-unix 'undecided-unix)
+)
+
+;; (add-to-list 'load-path "~/.emacs.d/gtags/share/gtags")
+;; (require 'gtags)
+
+(setq auto-revert-verbose nil)
+
+(delete-selection-mode t)
+;; (cua-selection-mode t)
+;; (setq cua-auto-tabify-rectangles nil)
+
+;; (global-unset-key (kbd "<C-return>"))
+;; (global-set-key (kbd "<C-return>") 'hippie-expand)
+
+(global-set-key (kbd "C-M-j") 'join-line)
+(global-set-key (kbd "M-æ") 'hippie-expand)
+
+(defun my-move-forward-list ()
+  (interactive)
+  (backward-up-list -1))
+
+(global-set-key (kbd "C-M-æ") 'my-move-forward-list)
+
+(setq dired-dwim-target t)
+
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
+
+(setq hippie-expand-try-functions-list
+      '(try-complete-file-name-partially 
+       try-complete-file-name 
+       try-expand-dabbrev 
+       try-expand-dabbrev-all-buffers 
+       try-expand-all-abbrevs 
+       try-expand-list 
+       try-expand-line 
+       try-expand-dabbrev-from-kill 
+       try-complete-lisp-symbol-partially 
+       try-complete-lisp-symbol))
+
+(global-set-key (kbd "C-S-j") 'windmove-left)
+(global-set-key (kbd "C-S-i") 'windmove-up)
+(global-set-key (kbd "C-S-k") 'windmove-down)
+(global-set-key (kbd "C-S-l") 'windmove-right)
+
+(defun my-nxml-mode-indent-setup ()
+  (setq nxml-child-indent 4))
+(add-hook 'nxml-mode-hook 'my-nxml-mode-indent-setup)
+
+(setq exec-path (cons "~/.emacs.d/bin" exec-path))
+(setq exec-path (cons "~/.emacs.d/plugins/telli" exec-path))
+(setenv "PATH" (concat "~/.emacs.d/bin;"
+                       (getenv "PATH")))
+
+(global-set-key (kbd "C-x C-j") 'dired-jump)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;
+;;;; cygwin support
+;;;;
+;; Sets your shell to use cygwin's bash, if Emacs finds it's running
+;; under Windows and c:\cygwin exists. Assumes that C:\cygwin\bin is
+;; not already in your Windows Path (it generally should not be).
+;;
+;; (let* ((cygwin-root "c:/cygwin")
+(let* ((cygwin-root "c:/MinGW/msys/1.0")
+       (cygwin-bin (concat cygwin-root "/bin")))
+  (when (and (eq 'windows-nt system-type)
+  	     (file-readable-p cygwin-root))
+
+    ;; (setq exec-path (cons "e:/dev/msysgit/bin" exec-path))
+    (setq exec-path (cons cygwin-bin exec-path))
+    ;; (setq exec-path (cons "C:/Python27" exec-path))
+    ;; (setq exec-path (append exec-path '("C:/cygwin/bin")))
+    ;; (setenv "PATH" (concat "C:/Python27;" 
+    ;;                        "c:/Program Files (x86)/TestDriven.NET 3/NUnit/2.5;"
+    ;;                        cygwin-bin ";" 
+    ;;                        "e:/dev/msysgit/bin;"
+    ;;                        (getenv "PATH")
+    ;;                        ";C:/cygwin/bin"
+    ;;                        ))
+
+    ;; By default use the Windows HOME.
+    ;; Otherwise, uncomment below to set a HOME
+    ;;      (setenv "HOME" (concat cygwin-root "/home/eric"))
+
+    ;; NT-emacs assumes a Windows shell. Change to baash.
+    (setq shell-file-name "sh")
+    (setenv "SHELL" shell-file-name)
+    (setq explicit-shell-file-name shell-file-name)
+    ;; (setq explicit-sh-args '("--login" "-i"))
+    (setq explicit-sh-args '("--noediting" "--login" "-i"))
+
+    ;; (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+    ;; This removes unsightly ^M characters that would otherwise
+    ;; appear in the output of java applications.
+    (add-hook 'comint-output-filter-functions 'comint-strip-ctrl-m)))
+
+;; (add-hook 'comint-output-filter-functions 'shell-strip-ctrl-m)
+
+;; (add-to-list 'process-coding-system-alist
+;;               '("bash" . (undecided-dos . undecided-unix)))
+
+;; (add-to-list 'process-coding-system-alist
+;;               '("sh" . (undecided-dos . undecided-unix)))
+
+(defadvice grep-compute-defaults (around grep-compute-defaults-advice-null-device)
+  "Use cygwin's /dev/null as the null-device."
+  (let ((null-device "/dev/null"))
+	ad-do-it))
+(ad-activate 'grep-compute-defaults)
+(setq null-device "/dev/null")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq-default tab-width 4)
+(setq-default c-basic-offset 4)
+(setq-default indent-tabs-mode nil)
+(setq-default c-hungry-delete-key t)
+
+(defun my-c++-mode-hook ()
+  (c-set-style "ellemtel")
+  ;; (c-set-offset 'substatement-open 0)
+  (setq c-basic-offset 4)
+  ;; (xgtags-mode)
+  (ggtags-mode)
+  ;; (highlight-symbol-mode)
+  ;; (setq highlight-symbol-nav-mode t)
+  (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  (local-set-key (kbd "RET") 'newline-and-indent)
+  (local-set-key (kbd "C-c r") 'ff-find-related-file))
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+(defun is-c-mode-derived ()
+  (let ((current-mode (buffer-local-value 'major-mode (current-buffer))))
+    (or (eq 'c++-mode current-mode)
+        (eq 'csharp-mode current-mode)
+        (eq 'c-mode current-mode))))
+
+(defun my-c-mode-open-brace (open-pair in-string)
+  (when (and (string= open-pair "{")
+             (not in-string)
+             (is-c-mode-derived))
+    ;; (message "found blaze")
+    (c-indent-line)
+    nil
+    ))
+
+(add-hook 'sp-autoinsert-inhibit-functions 'my-c-mode-open-brace)
+
+(add-hook 'eshell-first-time-mode-hook (lambda () 
+                                         (local-set-key (kbd "C-S-i") 'windmove-up)))
+
+(setq auto-mode-alist (cons '("\\.xaml$" . nxml-mode) auto-mode-alist))
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(setq auto-mode-alist (cons '("\\.cshtml$" . html-mode) auto-mode-alist))
+(add-hook 'html-mode-hook
+          (lambda()
+            (setq sgml-basic-offset 4)))
+ 
+(setq auto-mode-alist
+	  (append '(("\\.csproj$" . nxml-mode)) auto-mode-alist))
+
+(setq ffap-c-path '("." "../include" "../ffmpeg/include" "C:/Program Files (x86)/Microsoft Visual Studio 11.0/VC/INCLUDE"))
+(setq cc-search-directories '("." "../include" "../*"))
+
+;; (defun ac-cc-mode-setup ()
+;;   (setq ac-sources '(ac-source-params  ac-source-etags ac-source-yasnippet ac-source-words-in-same-mode-buffers )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'compile)
+
+(setq compilation-ask-about-save nil)
+;; (setq compilation-read-command nil)
+(setq compilation-scroll-output t)
+(setq compilation-window-height 20)
+(setq compile-auto-highlight t)
+
+(push '("^\\(.*\\)(\\([0-9]+\\),\\([0-9]+\\)): error" 1 2 3 2) compilation-error-regexp-alist)
+(push '("^\\(.*\\)(\\([0-9]+\\),\\([0-9]+\\)): warning" 1 2 3 1) compilation-error-regexp-alist)
+(push '("^\\(?:\s+[0-9]+>\\)+\\(.*\\)(\\([0-9]+\\)): error" 1 2 nil 2) compilation-error-regexp-alist)
+(push '("^\\(?:\s+[0-9]+>\\)+\\(.*\\)(\\([0-9]+\\)): warning" 1 2 nil 1) compilation-error-regexp-alist)
+(push '("^\\(?:\s+[0-9]+>\\)+\\(.*\\)(\\([0-9]+\\),\\([0-9]+\\)): error" 1 2 nil 2) compilation-error-regexp-alist)
+(push '("^\\(?:\s+[0-9]+>\\)+\\(.*\\)(\\([0-9]+\\),\\([0-9]+\\)): warning" 1 2 nil 1) compilation-error-regexp-alist)
+(setq compilation-skip-threshold 2)
+;; (setq compilation-directory-matcher '("\\(?:is building\\|Done Building Projec\\(t\\)\\) \"\\(.*\\)\\\\.*" (2 . 1)))
+;; (setq compilation-page-delimiter "^\\(?:.*\\(?:is building\\|Done Building Project\\) \".*\n\\)+")
+(push '("^at.*in \\(.*\\):line \\(.*\\)" 1 2 nil 2) compilation-error-regexp-alist)
+
+(defadvice compilation-filter (around compilation-filter-around (proc string))
+  ;; (setq string (concat "------- begin -------\n\n" string "\n\n--------- end --------\n\n"))
+  (let ((start 0))
+    (while (string-match "^\\(\s+\\(?:+[0-9]+>\\)?\\)?\\([^:]*\\(?:cs\\|cpp\\)\\)\\((.*\\[\\)\\(.*\\\\\\)\\(.*\\(?:s\\|_\\|x\\)proj\\]$\\)" string start)
+    ;; (while (string-match "^\\(\s+\\(?:+[0-9]+>\\)?\\)?\\(.*\\(?:cs\\|cpp\\)\\)\\((.*\\[\\)\\(.*\\\\\\)\\(.*\\(?:s\\|_\\|x\\)proj\\]$\\)" string start)
+    ;; (while (string-match "^\\(\s+\\(?:[0-9]+>\\)\\)?\\(.*\\)\\((.*\\[\\)\\(.*\\\\\\)\\(.*csproj\\]$\\)" string start)
+      (setq start (match-end 5))
+      (setq string
+            (replace-match 
+             (concat 
+              (match-string-no-properties 1 string)
+              (match-string-no-properties 4 string)
+              (match-string-no-properties 2 string)
+              (match-string-no-properties 3 string)
+              (match-string-no-properties 5 string)) t t string)
+            )
+      )
+    )
+  ad-do-it
+  )
+
+(ad-activate 'compilation-filter)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (ad-deactivate 'compilation-filter)
+
+(defun xaml-toggle ()
+  (interactive)
+  (let (buf-str buf-name buf-len buf-file)
+	(setq buf-name (buffer-file-name))
+	(setq buf-len (length buf-name))
+	(if (and (> buf-len 4) (not (equal buf-name nil)))
+		(progn 
+		  (let (last-4)
+			(setq last-4 (substring buf-name (- buf-len 4) buf-len))
+			(if (string= last-4 "xaml")
+				(setq buf-str (concat buf-name ".cs"))
+			  (setq buf-str (substring buf-name 0 (- buf-len 3)))
+			  )
+			)
+		  (when (file-exists-p buf-str)
+			(find-file-other-window buf-str)
+			)
+		  )
+	  )
+	)
+  )
+(global-set-key [f7] 'xaml-toggle)
+
+(ediff-toggle-multiframe)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'dired)
+
+(defun execute-dired-find-file ()
+  "In dired, run the w32-shell-execute on this file."
+  (interactive)
+  ;; dired-get-filename is defined in dired.el
+  (w32-shell-execute nil (dos-canonical-name (dired-get-filename nil t))))
+(define-key dired-mode-map "\C-c\C-f" 'execute-dired-find-file)
+
+(defun dos-canonical-name (filename)
+  "Canonicalize filename forcing `\\' as directory-sep-char."
+  (let ((directory-sep-char ?\ ))
+    (expand-file-name filename)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun move-text-internal (arg) 
+   (cond 
+    ((and mark-active transient-mark-mode) 
+     (if (> (point) (mark)) 
+        (exchange-point-and-mark)) 
+     (let ((column (current-column)) 
+          (text (delete-and-extract-region (point) (mark)))) 
+       (forward-line arg) 
+       (move-to-column column t) 
+       (set-mark (point)) 
+       (insert text) 
+       (exchange-point-and-mark) 
+       (setq deactivate-mark nil))) 
+    (t 
+     (beginning-of-line) 
+     (when (or (> arg 0) (not (bobp))) 
+       (forward-line) 
+       (when (or (< arg 0) (not (eobp))) 
+        (transpose-lines arg)) 
+       (forward-line -1))))) 
+(defun move-text-down (arg) 
+   "Move region (transient-mark-mode active) or current line 
+  arg lines down." 
+   (interactive "*p") 
+   (move-text-internal arg)) 
+(defun move-text-up (arg) 
+   "Move region (transient-mark-mode active) or current line 
+  arg lines up." 
+   (interactive "*p") 
+   (move-text-internal (- arg))) 
+(global-set-key [(meta shift p)] 'move-text-up) 
+(global-set-key [(meta shift n)] 'move-text-down) 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun scroll-up-one-line()
+  (interactive)
+  (scroll-up 1))
+
+(defun scroll-down-one-line()
+  (interactive)
+  (scroll-down 1))
+
+(global-set-key [?\C-.] 'scroll-down-one-line)
+(global-set-key [?\C-,] 'scroll-up-one-line)
+
+(defun sacha/search-word-backward ()
+  "Find the previous occurrence of the current word."
+  (interactive)
+  (let ((cur (point)))
+    (skip-syntax-backward "w_")
+    (goto-char
+     (if (re-search-backward (concat "\\_<" (current-word) "\\_>") nil t)
+         (match-beginning 0)
+       cur))))
+
+(defun sacha/search-word-forward ()
+  "Find the next occurrence of the current word."
+  (interactive)
+  (let ((cur (point)))
+    (skip-syntax-forward "w_")
+    (goto-char
+     (if (re-search-forward (concat "\\_<" (current-word) "\\_>") nil t)
+         (match-beginning 0)
+       cur))))
+(global-set-key (kbd "C-S-p") 'sacha/search-word-backward)
+(global-set-key (kbd "C-S-n") 'sacha/search-word-forward)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun transpose-windows ()
+  (interactive)
+  (let ((this-buffer (window-buffer (selected-window)))
+        (other-buffer (prog2
+                          (other-window +1)
+                          (window-buffer (selected-window))
+                        (other-window -1))))
+    (switch-to-buffer other-buffer)
+    (switch-to-buffer-other-window this-buffer)
+    (other-window -1)))
+
+
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun prelude-google ()
+  "Googles a query or region if any."
+  (interactive)
+  (w3m-browse-url
+   (concat
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
+    (if mark-active
+        (buffer-substring (region-beginning) (region-end))
+      (progn
+        (let (str)
+          (setq str (read-string (format "Google ('%s'): "
+                                         (thing-at-point 'symbol))))
+          (if (string= str "")
+              (setq str (thing-at-point 'symbol))
+            str)))))))
+
+
+(defun google ()
+  "Googles a query or region if any."
+  (interactive)
+  (browse-url
+   (concat
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
+    (if mark-active
+        (buffer-substring (region-beginning) (region-end))
+      (progn
+        (let (str)
+          (setq str (read-string (format "Google ('%s'): "
+                                         (thing-at-point 'symbol))))
+          (if (string= str "")
+              (setq str (thing-at-point 'symbol))
+            str)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'package)
+(add-to-list 'package-archives 
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives 
+             '("tromey" . "http://tromey.com/elpa/"))
+(add-to-list 'package-archives 
+             '("melpa" . "http://melpa.milkbox.net/packages/"))
+(package-initialize)
+
+(require 'undo-tree)
+(global-undo-tree-mode)
+
+
+;; (require 'xgtags)
+
+;; (add-hook 'xgtags-mode-hook 
+;;   (lambda()
+;;     (local-set-key (kbd "M-.") 'xgtags-find-tag)   ; find a tag, also M-.
+;;     (local-set-key (kbd "M-,") 'xgtags-find-rtag)  ; reverse tag
+;;     (local-set-key (kbd "M-*") 'xgtags-pop-stack)
+;;     (local-set-key (kbd "C-M-g") 'xgtags-find-with-grep)
+;;     ))
+
+;; (require 'highlight-symbol)
+;; (setq highlight-symbol-idle-delay 1.5)
+;; (highlight-symbol-nav-mode)
+
+(require 'wgrep)
+(setq wgrep-auto-save-buffer t)
+
+(require 'ido)
+(require 'flx-ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(flx-ido-mode 1)
+;; disable ido faces to see flx highlights.
+(setq ido-use-faces nil)
+
+(ido-vertical-mode 1)
+
+(setq ido-enable-prefix nil
+      ido-enable-flex-matching t
+      ido-case-fold nil
+      ido-auto-merge-work-directories-length -1
+      ;; ido-create-new-buffer 'always
+      ido-use-filename-at-point (quote guess)
+      ;; ido-max-prospects 10
+      ido-use-url-at-point t)
+
+;; disable auto searching for files unless called explicitly
+(setq ido-auto-merge-delay-time 99999)
+(define-key ido-file-dir-completion-map (kbd "C-c C-s") 
+  (lambda() 
+	(interactive)
+	(ido-initiate-auto-merge (current-buffer))))
+
+(require 'guide-key)
+(setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-x 5" "C-x 8" "C-c p" "C-x v"))
+(guide-key-mode 1) ; Enable guide-key-mode
+(setq guide-key/popup-window-position 'bottom)
+
+(require 'ag)
+
+(setq ag-highlight-search nil)
+
+(defun ag/search (string directory &optional regexp)
+  "Run ag searching for the STRING given in DIRECTORY.
+If REGEXP is non-nil, treat STRING as a regular expression."
+  (let ((default-directory (file-name-as-directory directory))
+        (ag-exe (concat (getenv "HOME") "/.emacs.d/ag/ag.exe"))
+        (arguments (if regexp
+                       ag-arguments
+                     (cons "--literal" ag-arguments))))
+    (if ag-highlight-search
+        (setq arguments (append '("--color" "--color-match" "30;43") arguments))
+      (setq arguments (append '("--nocolor") arguments)))
+    (setq arguments (append '("--line-number") arguments))
+    (unless (file-exists-p default-directory)
+      (error "No such directory %s" default-directory))
+    (compilation-start
+     (mapconcat 'shell-quote-argument
+                ;; (append '("/e/dev/git/ag/rel/ag.exe") arguments (list string))
+                (append (list ag-exe) arguments (list string))
+                " ")
+     'ag-mode
+     `(lambda (mode-name) ,(ag/buffer-name string directory regexp)))))
+
+
+;; TEMPORARY while magit is in a limbo mode
+;; (setq magit-emacsclient-executable "e:/dev/emacs-24.3/bin/emacsclient.exe")
+
+(projectile-global-mode)
+(setq projectile-indexing-method 'alien)
+
+(defcustom my-projectile-git-tmp-command "git ls-files"
+  "Command used by projectile to get the files in a git project."
+  :group 'projectile
+  :type 'string)
+
+(defcustom my-projectile-hg-tmp-command "hg manifest"
+  "Command used by projectile to get the files in a hg project."
+  :group 'projectile
+  :type 'string)
+
+(defun my-projectile-get-tmp-command ()
+  "Determine which tmp command to invoke based on the project's VCS."
+  (let ((vcs (projectile-project-vcs)))
+    (cond
+     ((eq vcs 'git) my-projectile-git-tmp-command)
+     ((eq vcs 'hg) my-projectile-hg-tmp-command)
+     (t (message "Neither git nor hg project!")))))
+
+(defun my-projectile-grep ()
+  "Perform rgrep in the project."
+  (interactive)
+  (save-excursion
+    (let ((roots (projectile-get-project-directories))
+          (search-regexp (if (and transient-mark-mode mark-active)
+                             (buffer-substring (region-beginning) (region-end))
+                           (read-string (projectile-prepend-project-name "Grep for: ")
+                                        (projectile-symbol-at-point)))))
+      (dolist (root-dir roots)
+        (require 'grep)
+        (let ((tmp-grep (format "%stmp-grep" root-dir))
+              tmp-cmd   
+              (curr-dir default-directory))
+          (setq tmp-cmd (format "%s > %s" (my-projectile-get-tmp-command) tmp-grep))
+          (cd root-dir)
+          (when (file-writable-p tmp-grep)
+            (shell-command tmp-cmd)
+            (shell-command (format "sed -i 's/^/\"/g' %s" tmp-grep))
+            (shell-command (format "sed -i 's/$/\"/g' %s" tmp-grep))
+;; "sed -i 's/ /\\\\ /g' tmp-grep"
+            (grep (format "cat tmp-grep | xargs egrep -inH '%s' || true" search-regexp)))
+          (cd curr-dir)
+          )))))
+
+
+(define-key projectile-mode-map (kbd "C-c p g") nil)
+(define-key projectile-mode-map (kbd "C-c p a") nil)
+(global-set-key (kbd "C-c p G") 'projectile-grep)
+(global-set-key (kbd "C-c p g") 'my-projectile-grep)
+(global-set-key (kbd "C-c p a") 'ag-project)
+(global-set-key (kbd "C-c p A") 'ag-project-regexp)
+
+(require 'ggtags)
+(define-key ggtags-navigation-map (kbd "M-<") nil)
+(define-key ggtags-navigation-map (kbd "M->") nil)
+
+(require 'smex) ; Not needed if you use package.el
+(smex-initialize) ; Can be omitted. This might cause a (minimal) delay
+                  ; when Smex is auto-initialized on its first run.
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+(require 'smartparens-config)
+(sp-pair "/*" "*/")
+(smartparens-global-mode t)
+
+(require 'ahg)
+
+(require 'zenburn-theme)
+;; (load-theme 'solarized-dark)
+
+(require 'pos-tip)
+
+(require 'cmake-mode)
+(setq auto-mode-alist
+      (append '(("CMakeLists\\.txt\\'" . cmake-mode)
+                ("\\.cmake\\'" . cmake-mode))
+              auto-mode-alist))
+
+;; (add-to-list 'load-path "~/.emacs.d/plugins/ac")
+(require 'auto-complete-config)
+;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac/ac-dict")
+(ac-config-default)
+(setq ac-auto-show-menu 0.05)
+;; (setq ac-ignore-case t)
+(setq ac-ignore-case 'smart)
+
+(set-face-background 'ac-candidate-face "#101010")
+(set-face-foreground 'ac-candidate-face "orange")
+(set-face-background 'ac-selection-face "black")
+(set-face-background 'ac-gtags-candidate-face "#101010")
+(set-face-foreground 'ac-gtags-candidate-face "orange")
+(set-face-foreground 'ac-gtags-selection-face "#dcdccc")
+(set-face-background 'ac-gtags-selection-face "black")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'tex-mik)
+
+(setq preview-gs-command "gswin32c.exe")
+
+(setq TeX-auto-save t
+	  TeX-parse-self t
+	  TeX-electric-sub-and-superscript t
+	  TeX-master nil
+	  preview-scale-function 1.33)
+
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'TeX-fold-mode)
+
+(defun my-tex-hook ()
+  (setq ac-sources (append '(ac-source-yasnippet) ac-sources)))
+
+(add-hook 'LaTeX-mode-hook 'my-tex-hook)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'yasnippet) ;; not yasnippet-bundle
+;; (yas/initialize)
+;; (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
+(setq yas/prompt-functions '(yas/dropdown-prompt yas/ido-prompt yas/x-prompt yas/completing-prompt yas/no-prompt))
+(setf yas/indent-line 'fixed)
+(yas-global-mode 1)
+
+;; (require 'auto-complete-etags)
+(setq tags-revert-without-query t)
+
+(autoload 'dos-mode "dos" "Edit Dos scripts." t)
+(add-to-list 'auto-mode-alist '("\\.bat$" . dos-mode))
+
+(global-set-key (kbd "C-M-m") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-æ") 'er/expand-region)
+
+;;; .emacs (don't put in (require 'csharp-mode))
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(setq csharp-want-imenu nil)
+
+(defun minimap-toggle ()
+  "Toggle minimap for current buffer."
+  (interactive)
+  (if (not (boundp 'minimap-bufname))
+      (setf minimap-bufname nil))
+  (if (null minimap-bufname)
+      (minimap-create)
+    (progn 
+      (minimap-kill)
+      (balance-windows))
+    ))
+
+(global-set-key [(meta shift m)] 'minimap-toggle)
+
+(require 'ess-site)
+(setq inferior-R-program-name "e:/dev/R/R-2.15.2/bin/i386/Rterm.exe")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-to-list 'load-path "~/.emacs.d/plugins")
+(require 'w32-fullscreen)
+(global-set-key [f11] 'w32-fullscreen)
+(require 'skarp)
+(require 'spoo)
+(load "~/.emacs.d/plugins/telli/telli.el")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun narrow-to-region-indirect (start end)
+  "Restrict editing in this buffer to the current region, indirectly."
+  (interactive "r")
+  (save-excursion
+	(if (region-active-p)
+        (progn
+          (let ((buf (clone-indirect-buffer nil nil)))
+            (with-current-buffer buf
+              (narrow-to-region start end))
+            (switch-to-buffer buf))
+		  )
+	  (message "No region found!")
+      )))
+
+(global-set-key "\C-xni" 'narrow-to-region-indirect)
+
+;; (require 'server)
+;; (or (server-running-p)
+;;     (server-start))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (defun open-solution-file (sln)
+;;   (interactive "fOpen solution file: ")
+;;   (let (org_file)
+;; 	(setq org_file (format "%s.org" sln))
+;; 	(shell-command (format "sln2org %s > %s" sln org_file))
+;; 	(find-file-read-only org_file)
+;; 	(set-sln-buffer (current-buffer))
+;; 	)
+;; )
+
+;; (defun compile-sln ()
+;;   (interactive)
+;;   (save-excursion
+;; 	(set-buffer sln-buffer)
+;; 	(print (pwd))
+;; 	(compile "make -k")
+;; 	(refresh-tags)
+;; 	;; (refresh-all-tags)
+;; 	)
+;; )
+;; (global-set-key [f6] 'compile-sln)
+
+;; (defun write-sln-files ()
+;;   (with-temp-buffer
+;; 	(insert (get-sln-files))
+;; 	(when (file-writable-p "tmp-files")
+;; 	  (write-region (point-min)
+;; 					(point-max)
+;; 					"tmp-files"))
+;; 	))
+
+;; (defun refresh-tags()
+;;   (save-excursion
+;;     (set-buffer sln-buffer)
+;;     (write-sln-files)
+;;     ;; (shell-command "etags -L tmp-files --fields=+ianmzS --c#-kinds=ceEfgimnpst")
+;;     (shell-command "etags -L tmp-files")
+;;     (if (boundp 'tags-completion-table)
+;; 	(progn
+;; 	  (setq tags-completion-table nil)
+;; 	  (tags-completion-table)))
+;;     ))
+
+;; (defvar sln-buffer nil "Zeh current solution buffer")
+
+;; (defun set-sln-buffer (sln-buf)
+;;   (interactive "bSolution buffer: ")
+;;   (setq sln-buffer sln-buf)
+;;   (setq tags-table-list nil)
+;;   ;; (tags-reset-tags-tables)
+;;   (refresh-tags)
+;;   (visit-tags-table "TAGS")
+;;   ;; (refresh-all-tags)
+;; )
+  
+
+;; (defun get-sln-files ()
+;;   (save-excursion
+;;     (set-buffer sln-buffer)
+;;     (with-temp-buffer
+;;       (insert-buffer-substring-no-properties sln-buffer)
+
+;;       (goto-char (point-min))
+;;       (keep-lines "\\[\\[")
+;;       ;; code to manipulate the string here
+;;       ;; ...
+;;       (goto-char (point-min))
+;;       (while (re-search-forward ".*\\[\\[\\(.*\\)\\]\\[.*\\]\\].*" nil t)
+;; 	(replace-match "\\1"))
+;;       (buffer-string)
+;;       )))
+
+;; (defun get-sln-files-list ()
+;;   (let (proj-sln)
+;; 	(setq proj-sln (split-string (get-sln-files) "\n"))))
+
+;; (defun open-project-file ()
+;;   (interactive)
+;;   (save-excursion
+;; 	(set-buffer sln-buffer)
+;; 	(find-file (ido-completing-read "Open project file: " (get-sln-files-list)))
+;; 	)
+;; )
+;; (global-set-key "\C-co" 'open-project-file)
+
+;; (defun find-in-sln(str)
+;;   "Searches for a regex in all files belonging to this solution."
+;;   (interactive "P")
+;;   (save-excursion
+;; 	(let ((default (thing-at-point 'symbol)))
+;; 	  (setq str (read-from-minibuffer (format "Search (default '%s'): " default)))
+;; 	  (if (string= str "")
+;; 		  (setq str default))
+;; 	  (set-buffer sln-buffer)
+;; 	  (with-temp-buffer
+;; 		(insert (get-sln-files))
+
+;; 		(let ((fill-column (point-max))) 
+;; 		  (fill-paragraph nil))
+
+;; 		(when (file-writable-p "tmp-grep")
+;; 		  (let ((coding-system-for-write 'unix))
+;; 			(write-region (point-min)
+;; 						  (point-max)
+;; 						  "tmp-grep"))        
+;; 		  )
+;; 		;; (buffer-string) ; get result
+;; 		)
+;; 	  ;; (message search-files)
+;; 	  (grep (format "cat tmp-grep | xargs -d '\\n' egrep -inH '%s'" str))
+;; 	  )
+;; 	)
+;;   )
+;; (global-set-key "\C-cf" 'find-in-sln)
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (defun search-site-url (site keyword)
+;;   (concat "http://www.google.com/" 
+;; 		  (format "search?q=%s+site:%s&btnI"
+;; 				  (url-hexify-string keyword)
+;; 				  (url-hexify-string site))))
+
+;; (defun browse-help ()
+;;    "Open a window showing the MSDN documentation for the word under the point"
+;;    (interactive)   
+;;    (w3m-browse-url (search-site-url  "msdn.microsoft.com/en-us" (thing-at-point 'word))))
+
+;; ;; (defun browse-help ()
+;; ;;   (interactive)
+;; ;;   (browse-url (format "http://msdn.microsoft.com/library/%s" (thing-at-point 'symbol)))
+;; ;; )
+;; (global-set-key [f1] 'browse-help)
+
+;; ;; (when (require 'bubble-buffer nil t)
+;; ;;   (global-set-key [f10] 'bubble-buffer-next)
+;; ;;   (global-set-key [(shift f10)] 'bubble-buffer-previous))
+;; ;; (setq bubble-buffer-omit-regexp "\\(^ .+$\\|\\*Messages\\*\\|*compilation\\*\\|\\*.+output\\*$\\|\\*TeX Help\\*$\\|\\*vc-diff\\*\\|\\*Occur\\*\\|\\*grep\\*\\|\\*cvs-diff\\*\\)")
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (add-to-list 'load-path "~/.emacs.d/matlab/")
+;; (autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+;; (add-to-list
+;;  'auto-mode-alist
+;;  '("\\.m$" . matlab-mode))
+;; (setq matlab-indent-function t)
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (defvar hl-tags-start-overlay nil)
+;; (make-variable-buffer-local 'hl-tags-start-overlay)
+
+;; (defvar hl-tags-end-overlay nil)
+;; (make-variable-buffer-local 'hl-tags-end-overlay)
+
+;; (defun hl-tags-context ()
+;;   (save-excursion
+;;     (let ((ctx (sgml-get-context)))
+;;       (and ctx
+;;            (if (eq (sgml-tag-type (car ctx)) 'close)
+;;                (cons (sgml-get-context) ctx)
+;;              (cons ctx (progn
+;;                          (sgml-skip-tag-forward 1)
+;;                          (backward-char 1)
+;;                          (sgml-get-context))))))))
+
+;; (defun hl-tags-update ()
+;;   (let ((ctx (hl-tags-context)))
+;;     (if (null ctx)
+;;         (hl-tags-hide)
+;;       (hl-tags-show)
+;;       (move-overlay hl-tags-end-overlay
+;;                     (sgml-tag-start (caar ctx))
+;;                     (sgml-tag-end (caar ctx)))
+;;       (move-overlay hl-tags-start-overlay
+;;                     (sgml-tag-start (cadr ctx))
+;;                     (sgml-tag-end (cadr ctx))))))
+
+;; (defun hl-tags-show ()
+;;   (unless hl-tags-start-overlay
+;;     (setq hl-tags-start-overlay (make-overlay 1 1)
+;;           hl-tags-end-overlay (make-overlay 1 1))
+;;     (overlay-put hl-tags-start-overlay 'face 'show-paren-match-face)
+;;     (overlay-put hl-tags-end-overlay 'face 'show-paren-match-face)))
+
+;; (defun hl-tags-hide ()
+;;   (when hl-tags-start-overlay
+;;     (delete-overlay hl-tags-start-overlay)
+;;     (delete-overlay hl-tags-end-overlay)))
+
+;; (define-minor-mode hl-tags-mode
+;;   "Toggle hl-tags-mode."
+;;   nil "" nil
+;;   (if hl-tags-mode
+;;       (add-hook 'post-command-hook 'hl-tags-update nil t)
+;;     (remove-hook 'post-command-hook 'hl-tags-update t)
+;;     (hl-tags-hide)))
+
+
+;; (provide 'hl-tags-mode)
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (autoload 'ack-same "full-ack" nil t)
+;; (autoload 'ack "full-ack" nil t)
+;; (autoload 'ack-find-same-file "full-ack" nil t)
+;; (autoload 'ack-find-file "full-ack" nil t)
+
+;; (add-to-list 'load-path "~/.emacs.d/w3m/")
+;; (require 'w3m-load)
+;; (setq w3m-use-cookies t)
+
+;; ;; (load "~/.emacs.d/plugins/python.el")
+;; ;; (require 'python)
+;; ;; (require 'python-autoloads)
+;; (setq python-shell-interpreter "C:\\Python27\\python.exe"
+;;       python-shell-interpreter-args "-i C:\\Python27\\Scripts\\ipython-script.py"
+;;       python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+;;       python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+;;       python-shell-completion-setup-code
+;;       "from IPython.core.completerlib import module_completion"
+;;       python-shell-completion-module-string-code
+;;       "';'.join(module_completion('''%s'''))\n"
+;;       python-shell-completion-string-code
+;;       "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+
+;; (setenv "PRINTER" "PDFCreator")
+;; (cond ((eq system-type 'windows-nt)
+;;        (setq ps-printer-name "PDFCreator")
+;;        (setq ps-printer-name-option "-d")
+;;        ;; (setq ps-lpr-command "/bin/lpr"))) ; if you're using the Emacs in Cygwin
+;;        (setq ps-lpr-command "c:/cygwin/bin/lpr.exe"))) ; if you're using the native Windows build of Emacs
+
+
+;; (defun cygwin-shell ()
+;;   "Run cygwin bash in shell mode."
+;;   (interactive)
+;;   (let ((explicit-shell-file-name "C:/cygwin/bin/bash"))
+;;     (call-interactively 'shell)))
+
+
+;; (defun word-dired-find-file ()
+;;   "In dired, run the MS Word on this file."
+;;   (interactive)
+;;   ;; dired-get-filename is defined in dired.el
+;;   (w32-shell-execute nil "winword" (w32-short-file-name (dired-get-filename))))
+;; (define-key dired-mode-map "\C-c\C-w" 'word-dired-find-file)
+
+;; (defun excel-dired-find-file ()
+;;   "In dired, run the MS Excel on this file."
+;;   (interactive)
+;;   ;; dired-get-filename is defined in dired.el
+;;   (w32-shell-execute nil "c:/progra~1/micros~2/office10/excel.exe"
+;; 		     (w32-short-file-name (dired-get-filename))))
+;; (define-key dired-mode-map "\C-cx" 'excel-dired-find-file)
+
+;; (defun wordpad-dired-find-file ()
+;;   "In dired, run the MS wordpad on this file."
+;;   (interactive)
+;;   ;; dired-get-filename is defined in dired.el
+;;   (w32-shell-execute nil "wordpad" (w32-short-file-name (dired-get-filename))))
+;; (define-key dired-mode-map "\C-c\C-p" 'wordpad-dired-find-file)
+
+;; (defun explorer-dired-find-file ()
+;;   "In dired, run the MS Windows Explorer on this file."
+;;   (interactive)
+;;   ;; dired-get-filename is defined in dired.el
+;;   (w32-shell-execute nil "explorer" (concat "/e," (dos-canonical-name (file-name-directory (w32-short-file-name (dired-get-filename nil t)))))))
+;; (define-key dired-mode-map "\C-c\C-e" 'explorer-dired-find-file)
+
+
+;; (defun gsview-dired-find-file ()
+;;   "In dired, run Ghostview on this file."
+;;   (interactive)
+;;   ;; dired-get-filename is defined in dired.el
+;;   (w32-shell-execute nil "gsview32" (dired-get-filename)))
+;; (define-key dired-mode-map "\C-c\C-g" 'gsview-dired-find-file)
+
+;; (dired-get-marked-files t current-prefix-arg)

@@ -1,0 +1,147 @@
+
+
+object.Equal(o1.o2);
+
+List<object> oo = new List<object>();
+oo[3].Equal(o1);
+
+List<byte[]> lb = new List<byte[]>();
+byte b = lb[4][3];
+
+string str = string . Empty() . fruss[] . foobar;
+
+string str = string
+               .Empty().
+               fruss[3]
+               .hross;
+
+luf_si.get_foo("bil bil ", 3, jojo.foo()).ArrayP.ArrayP[2].bar(juju.foobar[1]).ArrayP.baz();
+               --------- ignore --------                       --- ignore ---
+
+lufsi.get_foo("bil bil ").get_bar(juju.get_foobar
+
+
+
+List<object> bo = new List<object>();
+bo[3].Equal();
+bo.Add(new object());
+
+object[] boo = new object[2];
+boo.GetLength(0);
+
+boo[3].Equal(o1);
+
+boo[3]                  // get type
+        .Equal(o1);     // end token
+
+str                     // get type
+        .Split(' ')     // get return type
+        .GetLength(0);  // end token
+
+org                     // get type
+        .foo1()         // get return type
+        .foo2()         // get return type
+        .foo3()         // get return type
+        .foo4()         // get return type
+        .foo5()         // end token
+
+
+object obj = new object();
+obj.Equals(o1);
+obj.fruss
+obj.
+// find the class for 'obj'
+
+string str = "fruss gas geim";
+str.Split(' ').GetLength(0);
+str.Split(' ')[0].Copy().Length;
+str.Split(' ')[0].Length();
+str.Split(' ')[0].;
+str.Split(' ').;
+str.Split.
+
+string[] str = get_strings();
+str[0].Split(' ').GetLength(0);
+str.GetLength(0);
+str[0].Split(' ')[0].Copy().Length;
+str[0].Split(' ')[0].Length;
+
+Type tt = typeof(string);
+tt.GetType().GetType()
+
+int.TryParse
+Console.WriteLine
+
+File.Exists
+File.Exists.ToString
+System.IO.File.Exists
+
+List<object> list = null;
+list.Find(fruss).Equals(o1);
+list.GetRange().Count;
+list.GetRange()[3].Equals(o1);
+list[3].Equals(o1);
+list.Count;
+list.TrimExcess
+
+str[0]                  // find 'string[]' ... 
+                        // if 'str' --> 'Array'
+                        // else 'str[]' --> 'string'
+        .Split(' ')     // 'Split' sent in. 'string.Split' returns 'string[]' ---> 'Array'
+        .GetLength(0);  // final query: 'Array.GetLength'
+
+str[0]                  // find 'string[]' ... 
+                        // if 'str' --> 'Array'
+                        // else 'str[]' --> 'string'
+        .Split(' ')[0]  // 'Split[]' sent in. 'string.Split' returns 'string[]'
+                        // but [0] yields 'string'
+        .Copy();        // final query: 'string.Copy'
+
+obj.ArrayProperty[3].Equal(o1);
+// find obj
+// find the class for 'obj'
+// find the member ArrayProperty
+// find that ArrayProperty is an Array
+// find whether the Array is object[] or List<object>
+// extract 'object'
+// get members for 'object' or find 'object.Equal'
+// obj -> object
+//      ArrayProperty -> Array
+//                    [] -> object in array
+//                       .Equal -> member of object in array
+
+obj.func().Equal(o1);
+// obj -> object
+//     func() -> function with a return type R
+//            .Equal member of R
+
+obj.ArrayProperty.Add(o1);
+// find obj
+// find the class for 'obj'
+// find the member ArrayProperty
+// find that ArrayProperty is an Array
+// get members for 'Array' or find 'Array.Add'
+// obj -> object
+//      ArrayProperty -> Array
+//                    .Add  -> member of Array
+
+obj.Property.ToString();
+
+
+var bla = from l in some_list
+          where l.Property == something
+          select l;
+
+var bla = some_list
+                .Where(o => o.Prop == "fjf")
+                .ToList();
+
+(new object()).Equal(o1);
+
+
+System      -> IO
+System      -> Collections
+Collections -> Generics
+Collections -> fruss
+Generics    -> List
+IO          -> File
