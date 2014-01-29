@@ -638,24 +638,29 @@
 
 (setq ag-highlight-search nil)
 
-(defun ag/search (string directory &optional regexp)
+
+(defun* ag/search (string directory
+                          &key (regexp nil) (file-regex nil))
   "Run ag searching for the STRING given in DIRECTORY.
 If REGEXP is non-nil, treat STRING as a regular expression."
   (let ((default-directory (file-name-as-directory directory))
         (ag-exe (concat (getenv "HOME") "/.emacs.d/ag/ag.exe"))
         (arguments (if regexp
                        ag-arguments
-                     (cons "--literal" ag-arguments))))
+                     (cons "--literal" ag-arguments)))
+        (shell-command-switch "-c"))
     (if ag-highlight-search
         (setq arguments (append '("--color" "--color-match" "30;43") arguments))
       (setq arguments (append '("--nocolor") arguments)))
     (setq arguments (append '("--line-number") arguments))
+    (when (char-or-string-p file-regex)
+      (setq arguments (append `("--file-search-regex" ,file-regex) arguments)))
     (unless (file-exists-p default-directory)
       (error "No such directory %s" default-directory))
     (compilation-start
      (mapconcat 'shell-quote-argument
-                ;; (append '("/e/dev/git/ag/rel/ag.exe") arguments (list string))
                 (append (list ag-exe) arguments (list string))
+                ;; (append '("ag") arguments (list string "."))
                 " ")
      'ag-mode
      `(lambda (mode-name) ,(ag/buffer-name string directory regexp)))))
