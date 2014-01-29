@@ -593,7 +593,14 @@
 ;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
 
+(setq ido-vertical-define-keys nil)
 (ido-vertical-mode 1)
+
+(defun my/ido-setup-hook ()
+    (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
+    (define-key ido-completion-map (kbd "C-p") 'ido-prev-match))
+
+(add-hook 'ido-setup-hook 'my/ido-setup-hook)
 
 (setq ido-enable-prefix nil
       ido-enable-flex-matching t
