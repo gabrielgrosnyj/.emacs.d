@@ -324,6 +324,17 @@
 
 (require 'compile)
 
+;; (defadvice compile (before compile-before))
+(defun compile-sln ()
+  (interactive)
+  (let ((sln (car (file-expand-wildcards "*.sln"))))
+  (if sln
+      (setq compile-command (concat "MSBuild.exe -m -v:m " sln))
+    (setq compile-command "make -k -j 2 " sln))
+  )
+  (call-interactively 'compile)
+)
+
 (setq compilation-ask-about-save nil)
 ;; (setq compilation-read-command nil)
 (setq compilation-scroll-output t)
