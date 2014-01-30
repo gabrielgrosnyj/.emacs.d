@@ -198,7 +198,7 @@
 
 (setq exec-path (cons "~/.emacs.d/bin" exec-path))
 (setq exec-path (cons "~/.emacs.d/plugins/telli" exec-path))
-(setenv "PATH" (concat "~/.emacs.d/bin;"
+(setenv "PATH" (concat (getenv "HOME") "/.emacs.d/bin;"
                        (getenv "PATH")))
 
 (global-set-key (kbd "C-x C-j") 'dired-jump)
@@ -759,6 +759,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (setq ac-auto-show-menu 0.05)
 ;; (setq ac-ignore-case t)
 (setq ac-ignore-case 'smart)
+(setq ac-delay 0.05)
 
 (set-face-background 'ac-candidate-face "#101010")
 (set-face-foreground 'ac-candidate-face "orange")

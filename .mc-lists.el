@@ -27,6 +27,7 @@
         sp-cua-replace-region
         sp-self-insert-command
         wdired-finish-edit
+        yas-expand
         yas/expand
         ))
 

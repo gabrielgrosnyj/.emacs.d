@@ -462,7 +462,7 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq ac-auto-show-menu 0.5)
+(setq ac-auto-show-menu 0.05)
 (setq ac-delay 0.05)
 (setq ac-show-menu nil)
 
