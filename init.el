@@ -726,6 +726,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (require 'ggtags)
 (define-key ggtags-navigation-map (kbd "M-<") nil)
 (define-key ggtags-navigation-map (kbd "M->") nil)
+(define-key ggtags-navigation-map (kbd "M-{") nil)
+(define-key ggtags-navigation-map (kbd "M-}") nil)
+(define-key ggtags-navigation-map [return] nil)
+(define-key ggtags-navigation-map "\r" nil)
 
 (require 'smex) ; Not needed if you use package.el
 (smex-initialize) ; Can be omitted. This might cause a (minimal) delay
@@ -756,7 +760,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (require 'auto-complete-config)
 ;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac/ac-dict")
 (ac-config-default)
-(setq ac-auto-show-menu 0.05)
+(setq ac-auto-show-menu t)
 ;; (setq ac-ignore-case t)
 (setq ac-ignore-case 'smart)
 (setq ac-delay 0.05)
@@ -826,7 +830,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (global-set-key [(meta shift m)] 'minimap-toggle)
 
 (require 'ess-site)
-(setq inferior-R-program-name "e:/dev/R/R-2.15.2/bin/i386/Rterm.exe")
+(setq inferior-R-program-name "c:/Program Files/R/R-3.0.2/bin/i386/Rterm.exe")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
