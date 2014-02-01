@@ -573,7 +573,53 @@
              '("tromey" . "http://tromey.com/elpa/"))
 (add-to-list 'package-archives 
              '("melpa" . "http://melpa.milkbox.net/packages/"))
+
 (package-initialize)
+
+;; A little bit of Magnar Sveen's code
+(unless (file-exists-p "~/.emacs.d/elpa/archives/melpa")
+  (package-refresh-contents))
+
+(defun packages-install (packages)
+  (dolist (it packages)
+    (when (not (package-installed-p it))
+      (package-install it)))
+  (delete-other-windows))
+
+;; Install extensions if they're missing
+(defun init--install-packages ()
+  (packages-install
+   '(auctex
+     magit
+     ;; move-text
+     flx
+     flx-ido
+     yasnippet
+     smartparens
+     ido-vertical-mode
+     guide-key
+     wgrep
+     ag
+     wgrep-ag
+     pos-tip
+     ggtags
+     smex
+     ahg
+     zenburn-theme
+     cmake-mode
+     auto-complete
+     ess
+     undo-tree
+     projectile
+     expand-region
+     multiple-cursors
+     minimap)))
+
+(condition-case nil
+    (init--install-packages)
+  (error
+   (package-refresh-contents)
+   (init--install-packages)))
 
 (require 'undo-tree)
 (global-undo-tree-mode)
@@ -773,7 +819,32 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (set-face-foreground 'ac-gtags-selection-face "#dcdccc")
 (set-face-background 'ac-gtags-selection-face "black")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'yasnippet) ;; not yasnippet-bundle
+;; (yas/initialize)
+;; (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
+(setq yas/prompt-functions '(yas/dropdown-prompt yas/ido-prompt yas/x-prompt yas/completing-prompt yas/no-prompt))
+(setf yas/indent-line 'fixed)
+(yas-global-mode 1)
+
+(global-set-key (kbd "C-M-m") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-æ") 'er/expand-region)
+
+(defun minimap-toggle ()
+  "Toggle minimap for current buffer."
+  (interactive)
+  (if (not (boundp 'minimap-bufname))
+      (setf minimap-bufname nil))
+  (if (null minimap-bufname)
+      (minimap-create)
+    (progn 
+      (minimap-kill)
+      (balance-windows))
+    ))
+
+(global-set-key [(meta shift m)] 'minimap-toggle)
+
+(require 'ess-site)
+(setq inferior-R-program-name "c:/Program Files/R/R-3.0.2/bin/i386/Rterm.exe")
 
 (require 'tex-mik)
 
@@ -795,51 +866,22 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'yasnippet) ;; not yasnippet-bundle
-;; (yas/initialize)
-;; (yas/load-directory "~/.emacs.d/yasnippet-0.6.1c/snippets")
-(setq yas/prompt-functions '(yas/dropdown-prompt yas/ido-prompt yas/x-prompt yas/completing-prompt yas/no-prompt))
-(setf yas/indent-line 'fixed)
-(yas-global-mode 1)
-
-;; (require 'auto-complete-etags)
-(setq tags-revert-without-query t)
-
+(add-to-list 'load-path "~/.emacs.d/plugins")
+(require 'w32-fullscreen)
+(global-set-key [f11] 'w32-fullscreen)
 (autoload 'dos-mode "dos" "Edit Dos scripts." t)
 (add-to-list 'auto-mode-alist '("\\.bat$" . dos-mode))
-
-(global-set-key (kbd "C-M-m") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-æ") 'er/expand-region)
+(require 'skarp)
+(require 'spoo)
 
 ;;; .emacs (don't put in (require 'csharp-mode))
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
 (setq csharp-want-imenu nil)
 
-(defun minimap-toggle ()
-  "Toggle minimap for current buffer."
-  (interactive)
-  (if (not (boundp 'minimap-bufname))
-      (setf minimap-bufname nil))
-  (if (null minimap-bufname)
-      (minimap-create)
-    (progn 
-      (minimap-kill)
-      (balance-windows))
-    ))
-
-(global-set-key [(meta shift m)] 'minimap-toggle)
-
-(require 'ess-site)
-(setq inferior-R-program-name "c:/Program Files/R/R-3.0.2/bin/i386/Rterm.exe")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(add-to-list 'load-path "~/.emacs.d/plugins")
-(require 'w32-fullscreen)
-(global-set-key [f11] 'w32-fullscreen)
-(require 'skarp)
-(require 'spoo)
 (load "~/.emacs.d/plugins/telli/telli.el")
+
+;; (require 'auto-complete-etags)
+(setq tags-revert-without-query t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
