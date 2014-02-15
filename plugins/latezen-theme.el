@@ -88,7 +88,7 @@
     ("latezen-bg"       . "#111111")
     ("latezen-bg+1"     . "#101010")
     ("latezen-bg+2"     . "#5F5F5F")
-    ("latezen-bg+3"     . "#6F6F6F")
+    ("latezen-bg+3"     . "#515151")
     ("latezen-red+1"    . "#ffefd5")
     ("latezen-red"      . "#cdb5cd")
     ("latezen-red-1"    . "#ffe4c4")
