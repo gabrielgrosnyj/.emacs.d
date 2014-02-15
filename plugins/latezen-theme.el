@@ -89,6 +89,7 @@
     ("latezen-bg+1"     . "#101010")
     ("latezen-bg+2"     . "#5F5F5F")
     ("latezen-bg+3"     . "#515151")
+    ("latezen-error"    . "tomato")
     ("latezen-red+1"    . "#ffefd5")
     ("latezen-red"      . "#cdb5cd")
     ("latezen-red-1"    . "#ffe4c4")
@@ -100,7 +101,7 @@
     ("latezen-yellow-1" . "#f5fffa")
     ("latezen-yellow-2" . "#cdc8b1")
     ("latezen-green-1"  . "#666666")
-    ("latezen-green"    . "#555555")
+    ("latezen-green"    . "#9bcd9b")
     ("latezen-green+1"  . "#AAAAAA")
     ("latezen-green+2"  . "#555555")
     ("latezen-green+3"  . "#fff0f5")
@@ -147,6 +148,7 @@ Also bind `class' to ((class color) (min-colors 89))."
                                   :background ,latezen-bg-1
                                   :box (:line-width -1 :style released-button)))))
    `(highlight ((t (:background ,latezen-bg-05))))
+   `(error ((t (:foreground ,latezen-error))))
    `(success ((t (:foreground ,latezen-green :weight bold))))
    `(warning ((t (:foreground ,latezen-orange :weight bold))))
 ;;;;; compilation
@@ -161,8 +163,8 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(compilation-line-number ((t (:foreground ,latezen-yellow))))
    `(compilation-message-face ((t (:foreground ,latezen-blue))))
    `(compilation-warning-face ((t (:foreground ,latezen-orange :weight bold :underline t))))
-   `(compilation-mode-line-exit ((t (:foreground ,latezen-green+2 :weight bold))))
-   `(compilation-mode-line-fail ((t (:foreground ,latezen-red :weight bold))))
+   `(compilation-mode-line-exit ((t (:foreground ,latezen-green :weight bold))))
+   `(compilation-mode-line-fail ((t (:inherit error :weight bold))))
    `(compilation-mode-line-run ((t (:foreground ,latezen-yellow :weight bold))))
 ;;;;; grep
    `(grep-context-face ((t (:foreground ,latezen-fg))))
@@ -194,10 +196,10 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(vertical-border ((t (:foreground ,latezen-fg))))
 ;;;;; font lock
    `(font-lock-builtin-face ((t (:foreground ,latezen-fg :weight bold))))
-   `(font-lock-comment-face ((t (:foreground ,latezen-green))))
+   `(font-lock-comment-face ((t (:foreground ,latezen-bg+3))))
    `(font-lock-comment-delimiter-face ((t (:foreground ,latezen-green-1))))
    `(font-lock-constant-face ((t (:foreground ,latezen-green+4))))
-   `(font-lock-doc-face ((t (:foreground ,latezen-green+2))))
+   `(font-lock-doc-face ((t (:foreground ,latezen-bg+3))))
    `(font-lock-function-name-face ((t (:foreground ,latezen-cyan))))
    `(font-lock-keyword-face ((t (:foreground ,latezen-yellow :weight bold))))
    `(font-lock-negation-char-face ((t (:foreground ,latezen-yellow :weight bold))))
