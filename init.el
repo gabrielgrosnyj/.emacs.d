@@ -6,7 +6,7 @@
 (require 'org-install)
 (require 'org-latex)
 
-(setq user-full-name "Stef·n PÈtursson")
+(setq user-full-name "Stef√°n P√©tursson")
 (setq org-export-latex-format-toc-function (lambda (bla)))
 (add-to-list 'org-export-latex-classes
   '("stp-org-article"
@@ -47,22 +47,19 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(column-number-mode t)
- ;; '(cua-mode t nil (cua-base))
- '(custom-safe-themes (quote ("501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" "72cc9ae08503b8e977801c6d6ec17043b55313cda34bcf0e6921f2f04cf2da56" default)))
+ '(custom-safe-themes (quote ("cf3b9e992b68532e634aebe50b74ae65373cf5054d3fc4d8c4ea5ef437d2d12b" "501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" "72cc9ae08503b8e977801c6d6ec17043b55313cda34bcf0e6921f2f04cf2da56" default)))
  '(display-time-mode t)
  '(initial-buffer-choice "~/organize.org")
  '(menu-bar-mode nil)
+ '(ring-bell-function (quote ignore) t)
  '(show-paren-mode t)
- '(ring-bell-function 'ignore)
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "outline" :family "Consolas"))))
- '(match ((t (:foreground "LightSalmon"))))
- '(yas/field-highlight-face ((t (:background "#101010")))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "outline" :family "Consolas")))))
 
 (setq indicate-empty-lines t)
 (setq system-time-locale "C")
@@ -808,16 +805,9 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (ac-config-default)
 (setq ac-auto-show-menu t)
 ;; (setq ac-ignore-case t)
-(setq ac-ignore-case 'smart)
+;; (setq ac-ignore-case 'smart)
+(setq ac-ignore-case t)
 (setq ac-delay 0.05)
-
-(set-face-background 'ac-candidate-face "#101010")
-(set-face-foreground 'ac-candidate-face "orange")
-(set-face-background 'ac-selection-face "black")
-(set-face-background 'ac-gtags-candidate-face "#101010")
-(set-face-foreground 'ac-gtags-candidate-face "orange")
-(set-face-foreground 'ac-gtags-selection-face "#dcdccc")
-(set-face-background 'ac-gtags-selection-face "black")
 
 (require 'yasnippet) ;; not yasnippet-bundle
 ;; (yas/initialize)

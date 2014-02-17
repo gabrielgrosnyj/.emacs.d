@@ -13,6 +13,7 @@
         cua-insert-char-rectangle
         cua-paste
         down-list
+        eval-last-sexp
         fill-paragraph
         forward-sexp
         ido-execute-command
