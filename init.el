@@ -791,7 +791,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 (require 'ahg)
 
-(require 'zenburn-theme)
+;; (require 'zenburn-theme)
 ;; (load-theme 'solarized-dark)
 
 (require 'pos-tip)
@@ -867,6 +867,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (add-to-list 'load-path "~/.emacs.d/plugins")
+(require 'latezen-theme)
 (require 'w32-fullscreen)
 (global-set-key [f11] 'w32-fullscreen)
 (autoload 'dos-mode "dos" "Edit Dos scripts." t)
