@@ -36,48 +36,6 @@
 
 ;;; Color Palette
 
-;; (defvar latezen-colors-alist
-;;   '(("latezen-fg+1"     . "#FFFFEF")
-;;     ("latezen-fg"       . "#DCDCCC")
-;;     ("latezen-fg-1"     . "#656555")
-;;     ("latezen-bg-2"     . "#000000")
-;;     ("latezen-bg-1"     . "#2B2B2B")
-;;     ("latezen-bg-05"    . "#383838")
-;;     ("latezen-bg"       . "#1F1F1F")
-;;     ("latezen-bg+1"     . "#1E1E1E")
-;;     ("latezen-bg+2"     . "#5F5F5F")
-;;     ("latezen-bg+3"     . "#6F6F6F")
-;;     ("latezen-red+1"    . "#ffefd5")
-;;     ("latezen-red"      . "#ffebcd")
-;;     ("latezen-red-1"    . "#ffe4c4")
-;;     ("latezen-red-2"    . "#ffdab9")
-;;     ("latezen-red-3"    . "#ffdead")
-;;     ("latezen-red-4"    . "#ffe4b5")
-;;     ("latezen-orange"   . "#fff8dc")
-;;     ("latezen-yellow"   . "#fffacd")
-;;     ("latezen-yellow-1" . "#f5fffa")
-;;     ("latezen-yellow-2" . "#e6e6fa")
-;;     ("latezen-green-1"  . "#888888")
-;;     ("latezen-green"    . "#777777")
-;;     ("latezen-green+1"  . "#AAAAAA")
-;;     ("latezen-green+2"  . "#999999")
-;;     ("latezen-green+3"  . "#fff0f5")
-;;     ("latezen-green+4"  . "#ffe4e1")
-;;     ("latezen-cyan"     . "#dcdcdc")
-;;     ("latezen-blue+1"   . "#ffffe0")
-;;     ("latezen-blue"     . "#fffaf0")
-;;     ("latezen-blue-1"   . "#f5f5dc")
-;;     ("latezen-blue-2"   . "#eee0e5")
-;;     ("latezen-blue-3"   . "#eed5d2")
-;;     ("latezen-blue-4"   . "#eed2ee")
-;;     ("latezen-blue-5"   . "#ffe7ba")
-;;     ("latezen-magenta"  . "#DC8CC3"))
-;;   "List of Latezen colors.
-;; Each element has the form (NAME . HEX).
-
-;; `+N' suffixes indicate a color is lighter.
-;; `-N' suffixes indicate a color is darker.")
-
 (defvar latezen-colors-alist
   '(("latezen-fg+1"     . "#999999")
     ("latezen-fg"       . "#868686")
@@ -104,7 +62,7 @@
     ("latezen-green"    . "#9bcd9b")
     ("latezen-green+1"  . "#AAAAAA")
     ("latezen-green+2"  . "#555555")
-    ("latezen-green+3"  . "#fff0f5")
+    ("latezen-green+3"  . "#cdc9c9")
     ("latezen-green+4"  . "#cdcdc1")
     ("latezen-cyan"     . "#cdb79e")
     ("latezen-blue+1"   . "#cdc5bf")
