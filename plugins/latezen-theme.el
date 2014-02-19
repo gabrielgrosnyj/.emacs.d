@@ -67,7 +67,7 @@
     ("latezen-green+4"  . "#cdcdc1")
     ("latezen-cyan"     . "#cdb79e")
     ("latezen-blue+1"   . "#cdc5bf")
-    ("latezen-blue"     . "#fffaf0")
+    ("latezen-blue"     . "#68838b")
     ("latezen-blue-1"   . "#cdc1c5")
     ("latezen-blue-2"   . "#eee0e5")
     ("latezen-blue-3"   . "#eed5d2")
@@ -97,7 +97,7 @@ Also bind `class' to ((class color) (min-colors 89))."
 ;;;; Built-in
 ;;;;; basic coloring
    '(button ((t (:underline t))))
-   `(link ((t (:foreground ,latezen-yellow :underline t :weight bold))))
+   `(link ((t (:foreground ,latezen-blue  :underline t :weight bold))))
    `(link-visited ((t (:foreground ,latezen-yellow-2 :underline t :weight normal))))
    `(default ((t (:foreground ,latezen-fg :background ,latezen-bg))))
    `(cursor ((t (:foreground ,latezen-fg :background ,latezen-fg+1))))
@@ -676,7 +676,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(org-level-6 ((t (:foreground ,latezen-green+2))))
    `(org-level-7 ((t (:foreground ,latezen-red-4))))
    `(org-level-8 ((t (:foreground ,latezen-blue-4))))
-   `(org-link ((t (:foreground ,latezen-yellow-2 :underline t))))
+   `(org-link ((t (:foreground ,latezen-blue :underline t))))
    `(org-scheduled ((t (:foreground ,latezen-green+4))))
    `(org-scheduled-previously ((t (:foreground ,latezen-red))))
    `(org-scheduled-today ((t (:foreground ,latezen-blue+1))))
