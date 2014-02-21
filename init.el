@@ -6,7 +6,7 @@
 (require 'org-install)
 (require 'org-latex)
 
-(setq user-full-name "Stef√°n P√©tursson")
+(setq user-full-name "Stef·n PÈtursson")
 (setq org-export-latex-format-toc-function (lambda (bla)))
 (add-to-list 'org-export-latex-classes
   '("stp-org-article"
@@ -47,7 +47,7 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(column-number-mode t)
- '(custom-safe-themes (quote ("cf3b9e992b68532e634aebe50b74ae65373cf5054d3fc4d8c4ea5ef437d2d12b" "501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" "72cc9ae08503b8e977801c6d6ec17043b55313cda34bcf0e6921f2f04cf2da56" default)))
+ '(custom-safe-themes (quote ("8942d5e757ed5f18efe33d2366effd5ce867c00e125f6fc12fcf2a2f5253a99f" "cf3b9e992b68532e634aebe50b74ae65373cf5054d3fc4d8c4ea5ef437d2d12b" "501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" "72cc9ae08503b8e977801c6d6ec17043b55313cda34bcf0e6921f2f04cf2da56" default)))
  '(display-time-mode t)
  '(initial-buffer-choice "~/organize.org")
  '(menu-bar-mode nil)
