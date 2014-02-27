@@ -278,7 +278,9 @@
   ;; (setq highlight-symbol-nav-mode t)
   (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
-  (local-set-key (kbd "C-c r") 'ff-find-related-file))
+  (local-set-key (kbd "C-c r") 'ff-find-related-file)
+  (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
+  (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
 (defun is-c-mode-derived ()
@@ -891,6 +893,50 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       )))
 
 (global-set-key "\C-xni" 'narrow-to-region-indirect)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun stp-decorate-region (before after)
+  (catch 'no-bounds
+    (let (from to str out len)
+      (if (region-active-p)
+          (setq from (region-beginning)
+                to (region-end))
+        (progn
+          (let (bds)
+            (setq bds (bounds-of-thing-at-point 'symbol))
+            (unless bds
+              (throw 'no-bounds nil))
+            (setq from (car bds)
+                  to (cdr bds)))))
+      
+      (setq str (buffer-substring from to))
+      (setq out (concat before str after))
+      (setq len (length out))
+      (save-excursion
+        (delete-region from to)
+        (goto-char from)
+        (insert out)
+        (message str))
+      (forward-char len)
+      t
+      )))
+
+(defun stp-decorate-ptr (before after)
+  (when (stp-decorate-region before after)
+      (when (looking-at "\\*")
+        (delete-char 1))
+    ))
+
+(defun stp-decorate-unique-ptr ()
+  (interactive)
+  (stp-decorate-ptr "std::unique_ptr<" ">"))
+
+(defun stp-decorate-shared-ptr ()
+  (interactive)
+  (stp-decorate-ptr "std::shared_ptr<" ">"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)
 ;; (or (server-running-p)
