@@ -280,7 +280,8 @@
   (local-set-key (kbd "RET") 'newline-and-indent)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
-  (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr))
+  (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
+  (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
 (defun is-c-mode-derived ()
@@ -925,7 +926,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
         (insert out)
         (message str))
       (forward-char len)
-      t
+      len
       )))
 
 (defun stp-decorate-ptr (before after)
@@ -941,6 +942,19 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (defun stp-decorate-shared-ptr ()
   (interactive)
   (stp-decorate-ptr "std::shared_ptr<" ">"))
+
+
+(defun stp-decorate-cast ()
+  (interactive)
+  (let (len)
+    (setq len (stp-decorate-region "static_cast<int>(" ")"))
+    (when len
+      (backward-char (- len 15))
+      (push-mark (point))
+      (backward-char 3)
+      (activate-mark)
+      (setq deactivate-mark nil)
+      )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
