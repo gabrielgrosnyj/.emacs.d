@@ -323,7 +323,13 @@
 
 (require 'compile)
 
-;; (defadvice compile (before compile-before))
+(defun compile-cpp ()
+  (interactive)
+  (let ((file (file-name-nondirectory (buffer-file-name))))
+    (setq compile-command (concat "cl.exe -EHsc " file " && ./" (file-name-sans-extension file) ".exe"))
+    (call-interactively 'compile)
+    ))
+
 (defun compile-sln ()
   (interactive)
   (let ((sln (car (file-expand-wildcards "*.sln"))))
