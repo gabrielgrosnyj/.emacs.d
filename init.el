@@ -843,7 +843,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (global-set-key [(meta shift m)] 'minimap-toggle)
 
 (require 'ess-site)
-(setq inferior-R-program-name "c:/Program Files/R/R-3.0.2/bin/i386/Rterm.exe")
+(setq inferior-R-program-name "c:/Program Files/R/R-3.0.2/bin/i386/Rtermsetup.exe")
 
 (require 'tex-mik)
 

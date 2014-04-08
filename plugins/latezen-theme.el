@@ -141,13 +141,15 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(mode-line
      ((,class (:foreground ,latezen-green+1
                            :background ,latezen-bg-1
-                           :box (:line-width -1 :style released-button)))
+                           :box (:line-width 2 :color ,latezen-orange)))
+                           ;; :box (:line-width -1 :style released-button)))
       (t :inverse-video t)))
    `(mode-line-buffer-id ((t (:foreground ,latezen-yellow :weight bold))))
    `(mode-line-inactive
      ((t (:foreground ,latezen-green-1
                       :background ,latezen-bg-05
-                      :box (:line-width -1 :style released-button)))))
+                      :box (:line-width 2 :color ,latezen-bg-05)))))
+                      ;; :box (:line-width -1 :style released-button)))))
    `(region ((,class (:background ,latezen-bg-1))
              (t :inverse-video t)))
    `(secondary-selection ((t (:background ,latezen-bg+2))))
