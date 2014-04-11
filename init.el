@@ -619,7 +619,8 @@
      projectile
      expand-region
      multiple-cursors
-     minimap)))
+     minimap
+     buffer-move)))
 
 (condition-case nil
     (init--install-packages)
@@ -644,6 +645,12 @@
 ;; (require 'highlight-symbol)
 ;; (setq highlight-symbol-idle-delay 1.5)
 ;; (highlight-symbol-nav-mode)
+
+(require 'buffer-move)
+(global-set-key (kbd "M-J") 'buf-move-left)
+(global-set-key (kbd "M-I") 'buf-move-up)
+(global-set-key (kbd "M-K") 'buf-move-down)
+(global-set-key (kbd "M-L") 'buf-move-right)
 
 (require 'wgrep)
 (setq wgrep-auto-save-buffer t)
