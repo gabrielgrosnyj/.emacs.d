@@ -898,6 +898,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (add-to-list 'auto-mode-alist '("\\.bat$" . dos-mode))
 (require 'skarp)
 (require 'spoo)
+(require 'anchored-transpose)
+
+(global-set-key (kbd "C-x t") 'anchored-transpose)
+
 
 ;;; .emacs (don't put in (require 'csharp-mode))
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
