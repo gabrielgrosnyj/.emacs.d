@@ -149,6 +149,7 @@
 ;; (add-to-list 'load-path "~/.emacs.d/gtags/share/gtags")
 ;; (require 'gtags)
 
+(setq global-auto-revert-non-file-buffers t)
 (setq auto-revert-verbose nil)
 
 (delete-selection-mode t)
@@ -281,6 +282,7 @@
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
+  (local-set-key (kbd "C-c m") 'stp-decorate-move)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
@@ -353,6 +355,8 @@
 (push '("^\\(?:\s+[0-9]+>\\)+\\(.*\\)(\\([0-9]+\\)): warning" 1 2 nil 1) compilation-error-regexp-alist)
 (push '("^\\(?:\s+[0-9]+>\\)+\\(.*\\)(\\([0-9]+\\),\\([0-9]+\\)): error" 1 2 nil 2) compilation-error-regexp-alist)
 (push '("^\\(?:\s+[0-9]+>\\)+\\(.*\\)(\\([0-9]+\\),\\([0-9]+\\)): warning" 1 2 nil 1) compilation-error-regexp-alist)
+(push '("^\\(?:\s*\\)\\(.*\\)(\\([0-9]+\\))\s*:\s*see" 1 2 nil 2) compilation-error-regexp-alist)
+
 (setq compilation-skip-threshold 2)
 ;; (setq compilation-directory-matcher '("\\(?:is building\\|Done Building Projec\\(t\\)\\) \"\\(.*\\)\\\\.*" (2 . 1)))
 ;; (setq compilation-page-delimiter "^\\(?:.*\\(?:is building\\|Done Building Project\\) \".*\n\\)+")
@@ -620,7 +624,8 @@
      expand-region
      change-inner
      multiple-cursors
-     minimap)))
+     minimap
+     buffer-move)))
 
 (condition-case nil
     (init--install-packages)
@@ -649,6 +654,12 @@
 ;; (require 'highlight-symbol)
 ;; (setq highlight-symbol-idle-delay 1.5)
 ;; (highlight-symbol-nav-mode)
+
+(require 'buffer-move)
+(global-set-key (kbd "M-J") 'buf-move-left)
+(global-set-key (kbd "M-I") 'buf-move-up)
+(global-set-key (kbd "M-K") 'buf-move-down)
+(global-set-key (kbd "M-L") 'buf-move-right)
 
 (require 'wgrep)
 (setq wgrep-auto-save-buffer t)
@@ -799,6 +810,15 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (require 'smartparens-config)
 (sp-pair "/*" "*/")
 (smartparens-global-mode t)
+
+(sp-local-pair 'c++-mode "{" nil :post-handlers '((my-create-newline-and-enter-sexp "RET")))
+ 
+(defun my-create-newline-and-enter-sexp (&rest _ignored)
+  "Open a new brace or bracket expression, with relevant newlines and indent. "
+  (newline)
+  (indent-according-to-mode)
+  (forward-line -1)
+  (indent-according-to-mode))
 
 (require 'ahg)
 
@@ -959,6 +979,29 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       (backward-char 3)
       (activate-mark)
       (setq deactivate-mark nil)
+      )))
+
+(defun stp-decorate-move (x)
+  (interactive "P")
+  (if x
+      (stp-undecorate-region "std::move(" ")")
+    (stp-decorate-region "std::move(" ")")))
+
+(defun stp-undecorate-region (before after)
+  (let (from to str out)
+    (when (region-active-p)
+      (setq from (region-beginning)
+            to (region-end))
+      (setq str (buffer-substring from to))
+      (when (string-match (concat before "\\(.*\\)" after) str)
+        (setq out (match-string 1 str))
+        (save-excursion
+          (delete-region from to)
+          (goto-char from)
+          (insert out)
+          (message (concat "Removed " before "..." after))
+          ;; (forward-char len)
+          ))
       )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
