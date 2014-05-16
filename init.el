@@ -582,11 +582,6 @@
 
 (package-initialize)
 
-(require 'change-inner)
-(global-set-key (kbd "M-i") 'change-inner)
-(global-set-key (kbd "M-o") 'change-outer)
-
-
 ;; A little bit of Magnar Sveen's code
 (unless (file-exists-p "~/.emacs.d/elpa/archives/melpa")
   (package-refresh-contents))
@@ -632,6 +627,10 @@
   (error
    (package-refresh-contents)
    (init--install-packages)))
+
+(require 'change-inner)
+(global-set-key (kbd "M-i") 'change-inner)
+(global-set-key (kbd "M-o") 'change-outer)
 
 (require 'undo-tree)
 (global-undo-tree-mode)
