@@ -283,6 +283,7 @@
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
   (local-set-key (kbd "C-c m") 'stp-decorate-move)
+  (local-set-key (kbd "C-c a") 'stp-decorate-atomic)
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
@@ -997,6 +998,12 @@ If REGEXP is non-nil, treat STRING as a regular expression."
   (if x
       (stp-undecorate-region "std::move(" ")")
     (stp-decorate-region "std::move(" ")")))
+
+(defun stp-decorate-atomic (x)
+  (interactive "P")
+  (if x
+      (stp-undecorate-region "std::atomic<" ">")
+    (stp-decorate-region "std::atomic<" ">")))
 
 (defun stp-undecorate-region (before after)
   (let (from to str out)
