@@ -283,6 +283,7 @@
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
   (local-set-key (kbd "C-c m") 'stp-decorate-move)
+  (local-set-key (kbd "C-c i") 'stp-decorate-include)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
@@ -813,7 +814,8 @@ If REGEXP is non-nil, treat STRING as a regular expression."
   (newline)
   (indent-according-to-mode)
   (forward-line -1)
-  (indent-according-to-mode))
+  (indent-according-to-mode)
+)
 
 (require 'ahg)
 
@@ -837,6 +839,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (setq ac-ignore-case 'smart)
 (setq ac-ignore-case t)
 (setq ac-delay 0.05)
+;; (setq ac-show-menu-immediately-on-auto-complete t)
 
 (require 'yasnippet) ;; not yasnippet-bundle
 ;; (yas/initialize)
@@ -975,6 +978,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       (activate-mark)
       (setq deactivate-mark nil)
       )))
+
+(defun stp-decorate-include ()
+  (interactive)
+  (stp-decorate-region "#include <" ">"))
 
 (defun stp-decorate-move (x)
   (interactive "P")

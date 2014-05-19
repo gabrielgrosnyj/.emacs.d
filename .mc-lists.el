@@ -20,6 +20,7 @@
         kill-region
         kill-sexp
         mark-sexp
+        my-move-forward-list
         next-error
         nxml-electric-slash
         org-force-self-insert
@@ -27,6 +28,7 @@
         sp--self-insert-command
         sp-cua-replace-region
         sp-self-insert-command
+        stp-decorate-shared-ptr
         wdired-finish-edit
         yas-expand
         yas/expand
@@ -38,4 +40,5 @@
         minimap-toggle
         sacha/search-word-backward
         sacha/search-word-forward
+        undefined
         ))
