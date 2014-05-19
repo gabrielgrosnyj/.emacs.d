@@ -623,6 +623,7 @@
      undo-tree
      projectile
      expand-region
+     change-inner
      multiple-cursors
      minimap
      buffer-move)))
@@ -632,6 +633,10 @@
   (error
    (package-refresh-contents)
    (init--install-packages)))
+
+(require 'change-inner)
+(global-set-key (kbd "M-i") 'change-inner)
+(global-set-key (kbd "M-o") 'change-outer)
 
 (require 'undo-tree)
 (global-undo-tree-mode)
@@ -896,6 +901,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (add-to-list 'auto-mode-alist '("\\.bat$" . dos-mode))
 (require 'skarp)
 (require 'spoo)
+(require 'anchored-transpose)
+
+(global-set-key (kbd "C-x t") 'anchored-transpose)
+
 
 ;;; .emacs (don't put in (require 'csharp-mode))
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)

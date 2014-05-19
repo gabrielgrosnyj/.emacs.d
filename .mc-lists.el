@@ -8,6 +8,7 @@
         c-electric-delete-forward
         c-electric-lt-gt
         c-electric-semi&comma
+        c-indent-new-comment-line
         c-up-conditional
         comment-dwim
         cua-insert-char-rectangle
@@ -38,6 +39,7 @@
       '(
         ff-find-related-file
         minimap-toggle
+        query-replace
         sacha/search-word-backward
         sacha/search-word-forward
         undefined
