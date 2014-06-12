@@ -59,7 +59,21 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "outline" :family "Consolas")))))
+ '(default ((t (:inherit nil 
+                         :stipple nil 
+                         :inverse-video nil 
+                         :box nil 
+                         :strike-through nil 
+                         :overline nil 
+                         :underline nil 
+                         :slant normal 
+                         :weight normal 
+                         :height 90
+                         :width normal 
+                         :foundry "outline" 
+                         :family (if (eq 'windows-nt system-type)
+                                     "Consolas"
+                                   "DejaVu Sans Mono"))))))
 
 (setq indicate-empty-lines t)
 (setq system-time-locale "C")
@@ -714,7 +728,9 @@
   "Run ag searching for the STRING given in DIRECTORY.
 If REGEXP is non-nil, treat STRING as a regular expression."
   (let ((default-directory (file-name-as-directory directory))
-        (ag-exe (concat (getenv "HOME") "/.emacs.d/ag/ag.exe"))
+        (ag-exe (if (eq 'windows-nt system-type)
+                    (concat (getenv "HOME") "/.emacs.d/ag/ag.exe")
+                  ag-executable))
         (arguments (if regexp
                        ag-arguments
                      (cons "--literal" ag-arguments)))
