@@ -59,7 +59,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil 
+ `(default ((t (:inherit nil 
                          :stipple nil 
                          :inverse-video nil 
                          :box nil 
@@ -71,9 +71,9 @@
                          :height 90
                          :width normal 
                          :foundry "outline" 
-                         :family (if (eq 'windows-nt system-type)
-                                     "Consolas"
-                                   "DejaVu Sans Mono"))))))
+                         :family ,(if (eq 'windows-nt system-type)
+                                     "Source Code Pro"
+                                   "Fira Mono"))))))
 
 (setq indicate-empty-lines t)
 (setq system-time-locale "C")
