@@ -8,7 +8,6 @@
         c-electric-delete-forward
         c-electric-lt-gt
         c-electric-semi&comma
-        c-indent-new-comment-line
         c-up-conditional
         comment-dwim
         cua-insert-char-rectangle
@@ -29,6 +28,7 @@
         sp--self-insert-command
         sp-cua-replace-region
         sp-self-insert-command
+        stp-decorate-atomic
         stp-decorate-shared-ptr
         wdired-finish-edit
         yas-expand
@@ -39,8 +39,9 @@
       '(
         ff-find-related-file
         minimap-toggle
-        query-replace
         sacha/search-word-backward
         sacha/search-word-forward
         undefined
+        wgrep-change-to-wgrep-mode
+        wgrep-finish-edit
         ))
