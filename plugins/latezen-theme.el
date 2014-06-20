@@ -684,7 +684,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(org-scheduled-today ((t (:foreground ,latezen-blue+1))))
    `(org-sexp-date ((t (:foreground ,latezen-blue+1 :underline t))))
    `(org-special-keyword ((t (:inherit font-lock-comment-face))))
-   `(org-table ((t (:foreground latezen-red+2))))
+   `(org-table ((t (:foreground ,latezen-red+2))))
    `(org-tag ((t (:bold t :weight bold))))
    `(org-time-grid ((t (:foreground ,latezen-orange))))
    `(org-todo ((t (:bold t :foreground ,latezen-red :weight bold))))
