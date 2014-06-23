@@ -44,4 +44,5 @@
         undefined
         wgrep-change-to-wgrep-mode
         wgrep-finish-edit
+        widget-button-click
         ))
