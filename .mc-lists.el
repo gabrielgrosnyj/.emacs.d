@@ -3,7 +3,9 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        anchored-transpose
         backward-sexp
+        backward-up-list
         c-electric-colon
         c-electric-delete-forward
         c-electric-lt-gt

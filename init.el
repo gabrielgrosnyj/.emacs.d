@@ -1,5 +1,5 @@
 (prefer-coding-system 'utf-8)
-;; (set-terminal-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
 ;; (set-keyboard-coding-system 'utf-8)
 ;; (set-terminal-coding-system 'utf-8)
 
@@ -182,7 +182,10 @@
 
 (global-set-key (kbd "C-M-æ") 'my-move-forward-list)
 
-(setq dired-dwim-target t)
+(setq dired-dwim-target t
+      dired-recursive-copies t
+      dired-listing-switches "-lha"
+      dired-recursive-deletes 'top)
 
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
@@ -428,7 +431,9 @@
   )
 (global-set-key [f7] 'xaml-toggle)
 
-(ediff-toggle-multiframe)
+(setq ediff-diff-options "-w"
+      ediff-split-window-function 'split-window-horizontally
+      ediff-window-setup-function 'ediff-setup-windows-plain)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -594,10 +599,6 @@
 
 (require 'package)
 (add-to-list 'package-archives 
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives 
-             '("tromey" . "http://tromey.com/elpa/"))
-(add-to-list 'package-archives 
              '("melpa" . "http://melpa.milkbox.net/packages/"))
 
 (package-initialize)
@@ -641,7 +642,11 @@
      change-inner
      multiple-cursors
      minimap
-     buffer-move)))
+     buffer-move
+     hl-line+
+     ido-ubiquitous
+     recentf-ext
+     number-font-lock-mode)))
 
 (condition-case nil
     (init--install-packages)
@@ -656,6 +661,13 @@
 (require 'undo-tree)
 (global-undo-tree-mode)
 
+
+(require 'hl-line+)
+(defadvice switch-to-buffer (after switch-to-buffer-flash activate)
+      (flash-line-highlight))
+(toggle-hl-line-when-idle 1)
+
+(require 'recentf-ext)
 
 ;; (require 'xgtags)
 
@@ -1038,6 +1050,37 @@ If REGEXP is non-nil, treat STRING as a regular expression."
           ))
       )))
 
+(when (eq 'windows-nt system-type)
+  (setq woman-manpath '("c:/MinGW/msys/1.0/share/man" "c:/MinGW/opt/share/man"))
+  )
+
+(require 'woman)
+(setq stp-man-pages
+      (ignore-errors
+        (woman-file-name "")
+        (sort (mapcar 'car woman-topic-all-completions)
+              'string-lessp)))
+
+(defun stp-search-man-page ()
+  (interactive)
+  (let ((gaur (thing-at-point 'symbol)))
+    (message gaur)
+    (man (ido-completing-read "Man: " stp-man-pages nil nil gaur)))
+    )
+
+(global-set-key (kbd "C-c M") 'stp-search-man-page)
+
+(require 'man)
+(set-face-foreground 'Man-overstrike "#f5fffa")
+
+(set-face-background 'hl-line "#1A1A1A")
+
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+
+(add-hook 'prog-mode-hook 'number-font-lock-mode)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)
@@ -1330,3 +1373,4 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (define-key dired-mode-map "\C-c\C-g" 'gsview-dired-find-file)
 
 ;; (dired-get-marked-files t current-prefix-arg)
+
