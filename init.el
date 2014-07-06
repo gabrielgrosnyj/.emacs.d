@@ -643,6 +643,8 @@
      multiple-cursors
      minimap
      buffer-move
+     helm
+     helm-swoop
      hl-line+
      ido-ubiquitous
      recentf-ext
@@ -1200,6 +1202,56 @@ Position the cursor at its beginning, according to the current mode."
 
 (global-set-key (kbd "C-o") 'smart-open-line-above)
 (global-set-key (kbd "C-S-o") 'smart-open-line)
+
+(require 'helm)
+(require 'helm-config)
+
+(setq
+ helm-google-suggest-use-curl-p t
+ helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+ helm-quick-update t ; do not display invisible candidates
+ helm-idle-delay 0.01 ; be idle for this many seconds, before updating in delayed sources.
+ helm-input-idle-delay 0.01 ; be idle for this many seconds, before updating candidate buffer
+ helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+
+ ;; you can customize helm-do-grep to execute ack-grep
+ ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
+ ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
+ helm-split-window-default-side 'other ;; open helm buffer in another window
+ helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
+ ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+ ;;                                     '(picture-mode artist-mode))
+ helm-candidate-number-limit 200 ; limit the number of displayed canidates
+ helm-M-x-requires-pattern 0     ; show all candidates when set to 0
+ helm-boring-file-regexp-list
+ '("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$" "\\._darcs$" "\\.la$" "\\.o$" "\\.i$") ; do not show these files in helm buffer
+ helm-ff-file-name-history-use-recentf t
+ helm-move-to-line-cycle-in-source t ; move to end or beginning of source
+                                        ; when reaching top or bottom of source.
+ ;; ido-use-virtual-buffers t      ; Needed in helm-buffers-list
+ helm-buffers-fuzzy-matching t          ; fuzzy matching buffer names when non--nil
+                                        ; useful in helm-mini that lists buffers
+ )
+
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+
+  ;;; Save current position to mark ring
+(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+(require 'helm-swoop)
+(defun stp-helm-swoop ()
+  (interactive)
+  (push-mark)
+  (helm-swoop))
+(global-set-key (kbd "C-S-s") 'stp-helm-swoop)
+(global-set-key (kbd "C-M-S-s") 'helm-swoop-back-to-last-point)
+(define-key isearch-mode-map (kbd "C-S-s") 'helm-swoop-from-isearch)
+
+(set-face-background 'helm-selection "#2A2A2A")
+(set-face-foreground 'helm-swoop-target-line-face "#888888")
+(set-face-background 'helm-swoop-target-line-face "#2A2A2A")
+(set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
+(set-face-background 'helm-swoop-target-word-face "#555555")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
