@@ -428,7 +428,8 @@
   )
 (global-set-key [f7] 'xaml-toggle)
 
-(ediff-toggle-multiframe)
+(when window-system
+  (ediff-toggle-multiframe))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1330,3 +1331,4 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (define-key dired-mode-map "\C-c\C-g" 'gsview-dired-find-file)
 
 ;; (dired-get-marked-files t current-prefix-arg)
+
