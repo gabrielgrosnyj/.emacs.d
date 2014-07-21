@@ -1,5 +1,5 @@
 (prefer-coding-system 'utf-8)
-;; (set-terminal-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
 ;; (set-keyboard-coding-system 'utf-8)
 ;; (set-terminal-coding-system 'utf-8)
 
@@ -182,7 +182,10 @@
 
 (global-set-key (kbd "C-M-æ") 'my-move-forward-list)
 
-(setq dired-dwim-target t)
+(setq dired-dwim-target t
+      dired-recursive-copies t
+      dired-listing-switches "-lha"
+      dired-recursive-deletes 'top)
 
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
@@ -428,8 +431,9 @@
   )
 (global-set-key [f7] 'xaml-toggle)
 
-(when window-system
-  (ediff-toggle-multiframe))
+(setq ediff-diff-options "-w"
+      ediff-split-window-function 'split-window-horizontally
+      ediff-window-setup-function 'ediff-setup-windows-plain)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -498,6 +502,7 @@
 (defun sacha/search-word-backward ()
   "Find the previous occurrence of the current word."
   (interactive)
+  (push-mark)
   (let ((cur (point)))
     (skip-syntax-backward "w_")
     (goto-char
@@ -508,6 +513,7 @@
 (defun sacha/search-word-forward ()
   "Find the next occurrence of the current word."
   (interactive)
+  (push-mark)
   (let ((cur (point)))
     (skip-syntax-forward "w_")
     (goto-char
@@ -595,12 +601,7 @@
 
 (require 'package)
 (add-to-list 'package-archives 
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives 
-             '("tromey" . "http://tromey.com/elpa/"))
-(add-to-list 'package-archives 
              '("melpa" . "http://melpa.milkbox.net/packages/"))
-
 (package-initialize)
 
 ;; A little bit of Magnar Sveen's code
@@ -642,7 +643,13 @@
      change-inner
      multiple-cursors
      minimap
-     buffer-move)))
+     buffer-move
+     helm
+     ;; helm-swoop
+     hl-line+
+     ido-ubiquitous
+     ;; number-font-lock-mode
+     recentf-ext)))
 
 (condition-case nil
     (init--install-packages)
@@ -657,6 +664,13 @@
 (require 'undo-tree)
 (global-undo-tree-mode)
 
+
+(require 'hl-line+)
+(defadvice switch-to-buffer (after switch-to-buffer-flash activate)
+      (flash-line-highlight))
+(toggle-hl-line-when-idle 1)
+
+(require 'recentf-ext)
 
 ;; (require 'xgtags)
 
@@ -1038,6 +1052,208 @@ If REGEXP is non-nil, treat STRING as a regular expression."
           ;; (forward-char len)
           ))
       )))
+
+(when (eq 'windows-nt system-type)
+  (setq woman-manpath '("c:/MinGW/msys/1.0/share/man" "c:/MinGW/opt/share/man"))
+  )
+
+(require 'woman)
+(setq stp-man-pages
+      (ignore-errors
+        (woman-file-name "")
+        (sort (mapcar 'car woman-topic-all-completions)
+              'string-lessp)))
+
+(defun stp-search-man-page ()
+  (interactive)
+  (let ((gaur (thing-at-point 'symbol)))
+    (message gaur)
+    (man (ido-completing-read "Man: " stp-man-pages nil nil gaur)))
+    )
+
+(global-set-key (kbd "C-c M") 'stp-search-man-page)
+
+(require 'man)
+(set-face-foreground 'Man-overstrike "#f5fffa")
+
+(set-face-background 'hl-line "#1A1A1A")
+
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+
+; (add-hook 'prog-mode-hook 'number-font-lock-mode)
+
+(defadvice kill-ring-save (before slick-copy activate compile)
+  "When called interactively with no active region, copy a single
+line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (message "Copied line")
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+(defadvice kill-region (before slick-cut activate compile)
+  "When called interactively with no active region, kill a single
+  line instead."
+  (interactive
+   (if mark-active (list (region-beginning) (region-end))
+     (list (line-beginning-position)
+           (line-beginning-position 2)))))
+
+;; kill a line, including whitespace characters until next non-whiepsace character
+;; of next line
+(defadvice kill-line (before check-position activate)
+  (if (member major-mode
+              '(emacs-lisp-mode scheme-mode lisp-mode
+                                c-mode c++-mode objc-mode
+                                latex-mode plain-tex-mode))
+      (if (and (eolp) (not (bolp)))
+          (progn (forward-char 1)
+                 (just-one-space 0)
+                 (backward-char 1)))))
+
+;; taken from prelude-editor.el
+;; automatically indenting yanked text if in programming-modes
+(defvar yank-indent-modes
+  '(LaTeX-mode TeX-mode)
+  "Modes in which to indent regions that are yanked (or yank-popped).
+Only modes that don't derive from `prog-mode' should be listed here.")
+
+(defvar yank-indent-blacklisted-modes
+  '(python-mode slim-mode haml-mode)
+  "Modes for which auto-indenting is suppressed.")
+
+(defvar yank-advised-indent-threshold 1000
+  "Threshold (# chars) over which indentation does not automatically occur.")
+
+(defun yank-advised-indent-function (beg end)
+  "Do indentation, as long as the region isn't too large."
+  (if (<= (- end beg) yank-advised-indent-threshold)
+      (indent-region beg end nil)))
+
+(defadvice yank (after yank-indent activate)
+  "If current mode is one of 'yank-indent-modes,
+indent yanked text (with prefix arg don't indent)."
+  (if (and (not (ad-get-arg 0))
+           (not (member major-mode yank-indent-blacklisted-modes))
+           (or (derived-mode-p 'prog-mode)
+               (member major-mode yank-indent-modes)))
+      (let ((transient-mark-mode nil))
+        (yank-advised-indent-function (region-beginning) (region-end)))))
+
+(defadvice yank-pop (after yank-pop-indent activate)
+  "If current mode is one of `yank-indent-modes',
+indent yanked text (with prefix arg don't indent)."
+  (when (and (not (ad-get-arg 0))
+             (not (member major-mode yank-indent-blacklisted-modes))
+             (or (derived-mode-p 'prog-mode)
+                 (member major-mode yank-indent-modes)))
+    (let ((transient-mark-mode nil))
+      (yank-advised-indent-function (region-beginning) (region-end)))))
+
+;; prelude-core.el
+(defun prelude-duplicate-current-line-or-region (arg)
+  "Duplicates the current line or region ARG times.
+If there's no region, the current line will be duplicated. However, if
+there's a region, all lines that region covers will be duplicated."
+  (interactive "p")
+  (pcase-let* ((origin (point))
+               (`(,beg . ,end) (prelude-get-positions-of-line-or-region))
+               (region (buffer-substring-no-properties beg end)))
+    (-dotimes arg
+      (lambda (n)
+        (goto-char end)
+        (newline)
+        (insert region)
+        (setq end (point))))
+    (goto-char (+ origin (* (length region) arg) arg))))
+
+;; add duplicate line function from Prelude
+;; taken from prelude-core.el
+(defun prelude-get-positions-of-line-or-region ()
+  "Return positions (beg . end) of the current line
+or region."
+  (let (beg end)
+    (if (and mark-active (> (point) (mark)))
+        (exchange-point-and-mark))
+    (setq beg (line-beginning-position))
+    (if mark-active
+        (exchange-point-and-mark))
+    (setq end (line-end-position))
+    (cons beg end)))
+
+(global-set-key (kbd "C-M-d") 'prelude-duplicate-current-line-or-region)
+
+(defun smart-open-line-above ()
+  "Insert an empty line above the current line.
+Position the cursor at it's beginning, according to the current mode."
+  (interactive)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(defun smart-open-line ()
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(global-set-key (kbd "C-o") 'smart-open-line-above)
+(global-set-key (kbd "C-S-o") 'smart-open-line)
+
+(require 'helm)
+(require 'helm-config)
+
+(setq
+ helm-google-suggest-use-curl-p t
+ helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+ helm-quick-update t ; do not display invisible candidates
+ helm-idle-delay 0.01 ; be idle for this many seconds, before updating in delayed sources.
+ helm-input-idle-delay 0.01 ; be idle for this many seconds, before updating candidate buffer
+ helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+
+ ;; you can customize helm-do-grep to execute ack-grep
+ ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
+ ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
+ helm-split-window-default-side 'other ;; open helm buffer in another window
+ helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
+ ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+ ;;                                     '(picture-mode artist-mode))
+ helm-candidate-number-limit 200 ; limit the number of displayed canidates
+ helm-M-x-requires-pattern 0     ; show all candidates when set to 0
+ helm-boring-file-regexp-list
+ '("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$" "\\._darcs$" "\\.la$" "\\.o$" "\\.i$") ; do not show these files in helm buffer
+ helm-ff-file-name-history-use-recentf t
+ helm-move-to-line-cycle-in-source t ; move to end or beginning of source
+                                        ; when reaching top or bottom of source.
+ ;; ido-use-virtual-buffers t      ; Needed in helm-buffers-list
+ helm-buffers-fuzzy-matching t          ; fuzzy matching buffer names when non--nil
+                                        ; useful in helm-mini that lists buffers
+ )
+
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+
+  ;;; Save current position to mark ring
+(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+(require 'helm-swoop)
+(defun stp-helm-swoop ()
+  (interactive)
+  (push-mark)
+  (helm-swoop))
+(global-set-key (kbd "C-S-s") 'stp-helm-swoop)
+(global-set-key (kbd "C-M-S-s") 'helm-swoop-back-to-last-point)
+(define-key isearch-mode-map (kbd "C-S-s") 'helm-swoop-from-isearch)
+(setq helm-swoop-split-direction 'split-window-horizontally)
+
+(set-face-background 'helm-selection "#2A2A2A")
+(set-face-foreground 'helm-swoop-target-line-face "#888888")
+(set-face-background 'helm-swoop-target-line-face "#2A2A2A")
+(set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
+(set-face-background 'helm-swoop-target-word-face "#555555")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

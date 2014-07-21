@@ -3,7 +3,9 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        anchored-transpose
         backward-sexp
+        backward-up-list
         c-electric-colon
         c-electric-delete-forward
         c-electric-lt-gt
@@ -17,13 +19,16 @@
         fill-paragraph
         forward-sexp
         ido-execute-command
+        indent-for-tab-command
         kill-region
         kill-sexp
         mark-sexp
         my-move-forward-list
         next-error
         nxml-electric-slash
+        org-end-of-line
         org-force-self-insert
+        org-self-insert-command
         smex
         sp--self-insert-command
         sp-cua-replace-region
@@ -39,6 +44,7 @@
       '(
         ff-find-related-file
         minimap-toggle
+        repeat
         sacha/search-word-backward
         sacha/search-word-forward
         undefined
