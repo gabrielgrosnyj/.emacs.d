@@ -26,6 +26,8 @@
         next-error
         nxml-electric-slash
         org-force-self-insert
+        smart-open-line
+        smart-open-line-above
         smex
         sp--self-insert-command
         sp-cua-replace-region
