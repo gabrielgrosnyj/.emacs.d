@@ -502,6 +502,7 @@
 (defun sacha/search-word-backward ()
   "Find the previous occurrence of the current word."
   (interactive)
+  (push-mark)
   (let ((cur (point)))
     (skip-syntax-backward "w_")
     (goto-char
@@ -512,6 +513,7 @@
 (defun sacha/search-word-forward ()
   "Find the next occurrence of the current word."
   (interactive)
+  (push-mark)
   (let ((cur (point)))
     (skip-syntax-forward "w_")
     (goto-char
@@ -600,7 +602,6 @@
 (require 'package)
 (add-to-list 'package-archives 
              '("melpa" . "http://melpa.milkbox.net/packages/"))
-
 (package-initialize)
 
 ;; A little bit of Magnar Sveen's code
@@ -644,11 +645,11 @@
      minimap
      buffer-move
      helm
-     helm-swoop
+     ;; helm-swoop
      hl-line+
      ido-ubiquitous
-     recentf-ext
-     number-font-lock-mode)))
+     ;; number-font-lock-mode
+     recentf-ext)))
 
 (condition-case nil
     (init--install-packages)
@@ -1081,7 +1082,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
 
-(add-hook 'prog-mode-hook 'number-font-lock-mode)
+; (add-hook 'prog-mode-hook 'number-font-lock-mode)
 
 (defadvice kill-ring-save (before slick-copy activate compile)
   "When called interactively with no active region, copy a single
@@ -1246,6 +1247,7 @@ Position the cursor at its beginning, according to the current mode."
 (global-set-key (kbd "C-S-s") 'stp-helm-swoop)
 (global-set-key (kbd "C-M-S-s") 'helm-swoop-back-to-last-point)
 (define-key isearch-mode-map (kbd "C-S-s") 'helm-swoop-from-isearch)
+(setq helm-swoop-split-direction 'split-window-horizontally)
 
 (set-face-background 'helm-selection "#2A2A2A")
 (set-face-foreground 'helm-swoop-target-line-face "#888888")

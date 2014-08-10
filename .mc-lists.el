@@ -19,15 +19,18 @@
         fill-paragraph
         forward-sexp
         ido-execute-command
+        indent-for-tab-command
         kill-region
         kill-sexp
         mark-sexp
         my-move-forward-list
         next-error
         nxml-electric-slash
+        org-end-of-line
         org-force-self-insert
         smart-open-line
         smart-open-line-above
+        org-self-insert-command
         smex
         sp--self-insert-command
         sp-cua-replace-region
@@ -43,6 +46,7 @@
       '(
         ff-find-related-file
         minimap-toggle
+        repeat
         sacha/search-word-backward
         sacha/search-word-forward
         undefined
