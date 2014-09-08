@@ -3,43 +3,6 @@
 ;; (set-keyboard-coding-system 'utf-8)
 ;; (set-terminal-coding-system 'utf-8)
 
-(require 'org-install)
-(require 'org-latex)
-
-(setq user-full-name "Stefán Pétursson")
-(setq org-export-latex-format-toc-function (lambda (bla)))
-(add-to-list 'org-export-latex-classes
-  '("stp-org-article"
-"\\documentclass[11pt,a4paper]{article}
-\\usepackage{fontspec}
-\\usepackage{graphicx} 
-\\usepackage{hyperref}
-\\defaultfontfeatures{Mapping=tex-text}
-\\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
-\\usepackage{geometry}
-\\geometry{a4paper, textwidth=6.5in, textheight=10in,
-            marginparsep=7pt, marginparwidth=.6in}
-\\pagestyle{empty}
-\\title{}
-      [NO-DEFAULT-PACKAGES]
-      [NO-PACKAGES]"
-     ("\\section{%s}" . "\\section*{%s}")
-     ("\\subsection{%s}" . "\\subsection*{%s}")
-     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-(setq org-latex-to-pdf-process 
-  '("xelatex -interaction nonstopmode %f"
-     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
-
-;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
-(org-babel-do-load-languages
- 'org-babel-load-languages
-  '( (ditaa . t)         
-     (emacs-lisp . t)   
-   ))
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -1261,6 +1224,41 @@ Position the cursor at its beginning, according to the current mode."
 (require 'org)
 (define-key org-mode-map (kbd "C-M-m") 'mc/mark-next-like-this)
 (require 'ox-odt)
+(require 'org-latex)
+
+(setq user-full-name "Stefán Pétursson")
+(setq org-export-latex-format-toc-function (lambda (bla)))
+(add-to-list 'org-export-latex-classes
+  '("stp-org-article"
+"\\documentclass[11pt,a4paper]{article}
+\\usepackage{fontspec}
+\\usepackage{graphicx} 
+\\usepackage{hyperref}
+\\defaultfontfeatures{Mapping=tex-text}
+\\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
+\\usepackage{geometry}
+\\geometry{a4paper, textwidth=6.5in, textheight=10in,
+            marginparsep=7pt, marginparwidth=.6in}
+\\pagestyle{empty}
+\\title{}
+      [NO-DEFAULT-PACKAGES]
+      [NO-PACKAGES]"
+     ("\\section{%s}" . "\\section*{%s}")
+     ("\\subsection{%s}" . "\\subsection*{%s}")
+     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(setq org-latex-to-pdf-process 
+  '("xelatex -interaction nonstopmode %f"
+     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+
+;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+  '( (ditaa . t)         
+     (emacs-lisp . t)   
+   ))
 
 (require 'ace-jump-mode)
 (set-face-foreground 'ace-jump-face-foreground "tomato")
