@@ -649,7 +649,9 @@
      hl-line+
      ido-ubiquitous
      ;; number-font-lock-mode
-     recentf-ext)))
+     recentf-ext
+     ace-jump-mode
+)))
 
 (condition-case nil
     (init--install-packages)
@@ -887,6 +889,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 (global-set-key (kbd "C-M-m") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-æ") 'er/expand-region)
+(global-set-key (kbd "C-Æ") 'er/contract-region)
 
 (defun minimap-toggle ()
   "Toggle minimap for current buffer."
@@ -1254,6 +1257,26 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-background 'helm-swoop-target-line-face "#2A2A2A")
 (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
 (set-face-background 'helm-swoop-target-word-face "#555555")
+
+(require 'org)
+(define-key org-mode-map (kbd "C-M-m") 'mc/mark-next-like-this)
+(require 'ox-odt)
+
+(require 'ace-jump-mode)
+(set-face-foreground 'ace-jump-face-foreground "tomato")
+(global-set-key (kbd "M-A") 'ace-jump-mode)
+
+(require 'diminish)
+(diminish 'isearch-mode (string 32 #x279c))
+(diminish 'undo-tree-mode)
+(diminish 'eldoc-mode)
+(diminish 'guide-key-mode)
+(diminish 'smartparens-mode)
+(diminish 'yas-minor-mode)
+(diminish 'abbrev-mode)
+(diminish 'ggtags-mode)
+(eval-after-load "rainbow-mode"
+  '(diminish 'rainbow-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

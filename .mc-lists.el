@@ -26,13 +26,17 @@
         my-move-forward-list
         next-error
         nxml-electric-slash
+        org-backward-sentence
+        org-delete-char
         org-end-of-line
         org-force-self-insert
         org-self-insert-command
+        smart-open-line-above
         smex
         sp--self-insert-command
         sp-cua-replace-region
         sp-self-insert-command
+        sp-wrap-cancel
         stp-decorate-atomic
         stp-decorate-shared-ptr
         wdired-finish-edit
