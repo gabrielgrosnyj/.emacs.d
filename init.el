@@ -614,6 +614,7 @@
      ;; number-font-lock-mode
      recentf-ext
      ace-jump-mode
+     diminish
 )))
 
 (condition-case nil
@@ -1223,7 +1224,7 @@ Position the cursor at its beginning, according to the current mode."
 
 (require 'org)
 (define-key org-mode-map (kbd "C-M-m") 'mc/mark-next-like-this)
-(require 'ox-odt)
+;; (require 'ox-odt)
 (require 'org-latex)
 
 (setq user-full-name "Stefán Pétursson")
