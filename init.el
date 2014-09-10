@@ -615,6 +615,7 @@
      recentf-ext
      ace-jump-mode
      company
+     diminish
 )))
 
 (condition-case nil
@@ -1243,8 +1244,7 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-background 'helm-swoop-target-word-face "#555555")
 
 (require 'org)
-(define-key org-mode-map (kbd "C-M-m") 'mc/mark-next-like-this)
-(require 'ox-odt)
+;; (require 'ox-odt)
 (require 'org-latex)
 
 (setq user-full-name "Stefán Pétursson")
