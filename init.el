@@ -856,10 +856,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (define-key company-mode-map (kbd "C-p") 'company-select-previous)
 ;; (setq company-auto-complete t)
 
-(setq company-backends '(company-elisp 
+(setq company-backends '((company-elisp company-dabbrev-code)
                          company-nxml
                          company-cmake
-                         (company-keywords company-dabbrev-code company-yasnippet company-capf)
+                         (company-keywords company-dabbrev-code company-yasnippet company-gtags)
                          company-files 
                          company-dabbrev
                          ))
@@ -873,6 +873,8 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 (global-set-key (kbd "C-M-m") 'mc/mark-next-like-this)
 (global-set-key [(control meta shift m)] 'mc/unmark-next-like-this)
+(global-set-key (kbd "C-M-n") 'mc/skip-to-next-like-this)
+(global-set-key (kbd "C-M-,") 'mc/mark-all-symbols-like-this-in-defun)
 (global-set-key (kbd "C-æ") 'er/expand-region)
 (global-set-key (kbd "C-Æ") 'er/contract-region)
 

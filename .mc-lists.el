@@ -30,9 +30,9 @@
         org-delete-char
         org-end-of-line
         org-force-self-insert
+        org-self-insert-command
         smart-open-line
         smart-open-line-above
-        org-self-insert-command
         smart-open-line-above
         smex
         sp--self-insert-command
@@ -48,6 +48,7 @@
 
 (setq mc/cmds-to-run-once
       '(
+        describe-key-briefly
         ff-find-related-file
         minimap-toggle
         repeat
