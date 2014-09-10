@@ -212,6 +212,15 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(font-latex-italic-face ((t (:foreground ,latezen-cyan :slant italic))))
    `(font-latex-string-face ((t (:inherit ,font-lock-string-face))))
    `(font-latex-math-face ((t (:foreground ,latezen-orange))))
+;;;;; company
+   `(company-tooltip ((t (:inherit default :background ,latezen-bg+3 :foreground ,latezen-yellow))))
+   `(company-scrollbar-bg ((t (:background ,latezen-green-1))))
+   `(company-scrollbar-fg ((t (:background ,latezen-green+1))))
+   `(company-tooltip-selection ((t (:background ,latezen-green+3 :foreground ,latezen-bg-05))))
+   `(company-tooltip-common ((t (:background ,latezen-bg+3 :foreground ,latezen-yellow))))   
+   `(company-tooltip-common-selection ((t (:background ,latezen-green+3 :foreground ,latezen-bg-05))))   
+   `(company-preview-common ((t (:background ,latezen-bg-05 ))))
+   `(company-tooltip-annotation ((t (:background ,latezen-bg+3 :foreground ,latezen-yellow ))))
 ;;;;; auto-complete
    `(ac-candidate-face ((t (:background ,latezen-bg+3 :foreground ,latezen-red+1))))
    `(ac-selection-face ((t (:background ,latezen-blue-4 :foreground ,latezen-bg-05))))

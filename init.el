@@ -614,6 +614,7 @@
      ;; number-font-lock-mode
      recentf-ext
      ace-jump-mode
+     company
 )))
 
 (condition-case nil
@@ -832,16 +833,35 @@ If REGEXP is non-nil, treat STRING as a regular expression."
                 ("\\.cmake\\'" . cmake-mode))
               auto-mode-alist))
 
-;; (add-to-list 'load-path "~/.emacs.d/plugins/ac")
-(require 'auto-complete-config)
-;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac/ac-dict")
-(ac-config-default)
-(setq ac-auto-show-menu t)
+;; ;; (add-to-list 'load-path "~/.emacs.d/plugins/ac")
+;; (require 'auto-complete-config)
+;; ;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac/ac-dict")
+;; (ac-config-default)
+;; (setq ac-auto-show-menu t)
+;; ;; (setq ac-ignore-case t)
+;; ;; (setq ac-ignore-case 'smart)
 ;; (setq ac-ignore-case t)
-;; (setq ac-ignore-case 'smart)
-(setq ac-ignore-case t)
-(setq ac-delay 0.05)
-;; (setq ac-show-menu-immediately-on-auto-complete t)
+;; (setq ac-delay 0.05)
+;; ;; (setq ac-show-menu-immediately-on-auto-complete t)
+;; (define-key ac-mode-map (kbd "C-n") 'ac-next)
+;; (define-key ac-mode-map (kbd "C-p") 'ac-previous)
+
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-idle-delay 0)
+(setq company-minimum-prefix-length 1)
+(setq company-transformers '(company-sort-by-occurrence))
+;; (define-key company-mode-map (kbd "C-n") 'company-select-next)
+;; (define-key company-mode-map (kbd "C-p") 'company-select-previous)
+;; (setq company-auto-complete t)
+
+(setq company-backends '(company-elisp 
+                         company-nxml
+                         company-cmake
+                         (company-keywords company-dabbrev-code company-yasnippet company-capf)
+                         company-files 
+                         company-dabbrev
+                         ))
 
 (require 'yasnippet) ;; not yasnippet-bundle
 ;; (yas/initialize)
@@ -851,6 +871,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (yas-global-mode 1)
 
 (global-set-key (kbd "C-M-m") 'mc/mark-next-like-this)
+(global-set-key [(control meta shift m)] 'mc/unmark-next-like-this)
 (global-set-key (kbd "C-æ") 'er/expand-region)
 (global-set-key (kbd "C-Æ") 'er/contract-region)
 
@@ -884,10 +905,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 (add-hook 'LaTeX-mode-hook 'TeX-fold-mode)
 
-(defun my-tex-hook ()
-  (setq ac-sources (append '(ac-source-yasnippet) ac-sources)))
+;; (defun my-tex-hook ()
+;;   (setq ac-sources (append '(ac-source-yasnippet) ac-sources)))
 
-(add-hook 'LaTeX-mode-hook 'my-tex-hook)
+;; (add-hook 'LaTeX-mode-hook 'my-tex-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -908,7 +929,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
 (setq csharp-want-imenu nil)
 
-(load "~/.emacs.d/plugins/telli/telli.el")
+;; (load "~/.emacs.d/plugins/telli/telli.el")
 
 ;; (require 'auto-complete-etags)
 (setq tags-revert-without-query t)
@@ -1569,3 +1590,4 @@ Position the cursor at its beginning, according to the current mode."
 
 ;; (dired-get-marked-files t current-prefix-arg)
 
+ 
