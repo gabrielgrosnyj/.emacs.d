@@ -9,6 +9,7 @@
         c-electric-colon
         c-electric-delete-forward
         c-electric-lt-gt
+        c-electric-pound
         c-electric-semi&comma
         c-up-conditional
         comment-dwim
@@ -40,6 +41,7 @@
         sp-self-insert-command
         sp-wrap-cancel
         stp-decorate-atomic
+        stp-decorate-cast
         stp-decorate-shared-ptr
         wdired-finish-edit
         yas-expand
@@ -50,10 +52,12 @@
       '(
         describe-key-briefly
         ff-find-related-file
+        ido-switch-buffer
         minimap-toggle
         repeat
         sacha/search-word-backward
         sacha/search-word-forward
+        stp-helm-swoop
         undefined
         wgrep-change-to-wgrep-mode
         wgrep-finish-edit
