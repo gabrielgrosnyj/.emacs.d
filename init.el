@@ -616,6 +616,7 @@
      ace-jump-mode
      company
      diminish
+     fold-this
 )))
 
 (condition-case nil
@@ -1286,6 +1287,7 @@ Position the cursor at its beginning, according to the current mode."
 (require 'ace-jump-mode)
 (set-face-foreground 'ace-jump-face-foreground "tomato")
 (global-set-key (kbd "M-A") 'ace-jump-mode)
+(global-set-key (kbd "C-+") 'ace-jump-mode)
 
 (require 'diminish)
 (diminish 'isearch-mode (string 32 #x279c))
