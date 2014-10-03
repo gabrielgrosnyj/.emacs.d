@@ -849,7 +849,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
-(setq company-idle-delay 0)
+(setq company-idle-delay 0.01)
 (setq company-minimum-prefix-length 1)
 (setq company-transformers '(company-sort-by-occurrence))
 ;; (define-key company-mode-map (kbd "C-n") 'company-select-next)
