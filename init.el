@@ -1245,6 +1245,8 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-background 'helm-swoop-target-line-face "#2A2A2A")
 (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
 (set-face-background 'helm-swoop-target-word-face "#555555")
+(set-face-foreground 'helm-match "#DDDDDD")
+(set-face-background 'helm-match "#111111")
 
 (require 'org)
 ;; (require 'ox-odt)
