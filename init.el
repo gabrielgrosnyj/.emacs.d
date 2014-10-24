@@ -257,7 +257,8 @@
   (ggtags-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
-  (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  ;; (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
@@ -1245,6 +1246,7 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-background 'helm-swoop-target-line-face "#2A2A2A")
 (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
 (set-face-background 'helm-swoop-target-word-face "#555555")
+(require 'helm-match-plugin)
 (set-face-foreground 'helm-match "#DDDDDD")
 (set-face-background 'helm-match "#111111")
 
