@@ -55,6 +55,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 (global-auto-revert-mode)
+(global-prettify-symbols-mode)
 
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -257,13 +258,15 @@
   (ggtags-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
-  (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  ;; (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
   (local-set-key (kbd "C-c m") 'stp-decorate-move)
   (local-set-key (kbd "C-c a") 'stp-decorate-atomic)
+  (local-set-key (kbd "C-c v") 'stp-decorate-vector)
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
@@ -415,37 +418,43 @@
     (expand-file-name filename)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg))
+        (when (< arg 0)
+          (forward-line -1))
+        (forward-line -1))
+      (move-to-column column t)))))
 
-(defun move-text-internal (arg) 
-   (cond 
-    ((and mark-active transient-mark-mode) 
-     (if (> (point) (mark)) 
-        (exchange-point-and-mark)) 
-     (let ((column (current-column)) 
-          (text (delete-and-extract-region (point) (mark)))) 
-       (forward-line arg) 
-       (move-to-column column t) 
-       (set-mark (point)) 
-       (insert text) 
-       (exchange-point-and-mark) 
-       (setq deactivate-mark nil))) 
-    (t 
-     (beginning-of-line) 
-     (when (or (> arg 0) (not (bobp))) 
-       (forward-line) 
-       (when (or (< arg 0) (not (eobp))) 
-        (transpose-lines arg)) 
-       (forward-line -1))))) 
-(defun move-text-down (arg) 
-   "Move region (transient-mark-mode active) or current line 
-  arg lines down." 
-   (interactive "*p") 
-   (move-text-internal arg)) 
-(defun move-text-up (arg) 
-   "Move region (transient-mark-mode active) or current line 
-  arg lines up." 
-   (interactive "*p") 
-   (move-text-internal (- arg))) 
+(defun move-text-down (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines down."
+  (interactive "*p")
+  (move-text-internal arg))
+
+(defun move-text-up (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines up."
+  (interactive "*p")
+  (move-text-internal (- arg)))
+
 (global-set-key [(meta shift p)] 'move-text-up) 
 (global-set-key [(meta shift n)] 'move-text-down) 
 
@@ -564,7 +573,7 @@
 
 (require 'package)
 (add-to-list 'package-archives 
-             '("melpa" . "http://melpa.milkbox.net/packages/"))
+             '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
 
 ;; A little bit of Magnar Sveen's code
@@ -666,7 +675,8 @@
 (require 'ido)
 (require 'flx-ido)
 (ido-mode 1)
-(ido-everywhere 1)
+;; c++-mode crash
+;; (ido-everywhere 1)
 (flx-ido-mode 1)
 ;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
@@ -841,12 +851,12 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (ac-config-default)
 ;; (setq ac-auto-show-menu t)
 ;; ;; (setq ac-ignore-case t)
-;; ;; (setq ac-ignore-case 'smart)
-;; (setq ac-ignore-case t)
+;; (setq ac-ignore-case 'smart)
+;; ;; (setq ac-ignore-case t)
 ;; (setq ac-delay 0.05)
-;; ;; (setq ac-show-menu-immediately-on-auto-complete t)
-;; (define-key ac-mode-map (kbd "C-n") 'ac-next)
-;; (define-key ac-mode-map (kbd "C-p") 'ac-previous)
+;; ;; ;; (setq ac-show-menu-immediately-on-auto-complete t)
+;; ;; (define-key ac-mode-map (kbd "C-n") 'ac-next)
+;; ;; (define-key ac-mode-map (kbd "C-p") 'ac-previous)
 
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
@@ -1026,6 +1036,12 @@ If REGEXP is non-nil, treat STRING as a regular expression."
   (if x
       (stp-undecorate-region "std::atomic<" ">")
     (stp-decorate-region "std::atomic<" ">")))
+
+(defun stp-decorate-vector (x)
+  (interactive "P")
+  (if x
+      (stp-undecorate-region "std::vector<" ">")
+    (stp-decorate-region "std::vector<" ">")))
 
 (defun stp-undecorate-region (before after)
   (let (from to str out)
@@ -1245,46 +1261,47 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-background 'helm-swoop-target-line-face "#2A2A2A")
 (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
 (set-face-background 'helm-swoop-target-word-face "#555555")
+(require 'helm-match-plugin)
 (set-face-foreground 'helm-match "#DDDDDD")
 (set-face-background 'helm-match "#111111")
 
-(require 'org)
-;; (require 'ox-odt)
-(require 'org-latex)
+;; (require 'org)
+;; ;; (require 'ox-odt)
+;; (require 'org-latex)
 
-(setq user-full-name "Stefán Pétursson")
-(setq org-export-latex-format-toc-function (lambda (bla)))
-(add-to-list 'org-export-latex-classes
-  '("stp-org-article"
-"\\documentclass[11pt,a4paper]{article}
-\\usepackage{fontspec}
-\\usepackage{graphicx} 
-\\usepackage{hyperref}
-\\defaultfontfeatures{Mapping=tex-text}
-\\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
-\\usepackage{geometry}
-\\geometry{a4paper, textwidth=6.5in, textheight=10in,
-            marginparsep=7pt, marginparwidth=.6in}
-\\pagestyle{empty}
-\\title{}
-      [NO-DEFAULT-PACKAGES]
-      [NO-PACKAGES]"
-     ("\\section{%s}" . "\\section*{%s}")
-     ("\\subsection{%s}" . "\\subsection*{%s}")
-     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+;; (setq user-full-name "Stefán Pétursson")
+;; (setq org-export-latex-format-toc-function (lambda (bla)))
+;; (add-to-list 'org-export-latex-classes
+;;   '("stp-org-article"
+;; "\\documentclass[11pt,a4paper]{article}
+;; \\usepackage{fontspec}
+;; \\usepackage{graphicx} 
+;; \\usepackage{hyperref}
+;; \\defaultfontfeatures{Mapping=tex-text}
+;; \\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
+;; \\usepackage{geometry}
+;; \\geometry{a4paper, textwidth=6.5in, textheight=10in,
+;;             marginparsep=7pt, marginparwidth=.6in}
+;; \\pagestyle{empty}
+;; \\title{}
+;;       [NO-DEFAULT-PACKAGES]
+;;       [NO-PACKAGES]"
+;;      ("\\section{%s}" . "\\section*{%s}")
+;;      ("\\subsection{%s}" . "\\subsection*{%s}")
+;;      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-(setq org-latex-to-pdf-process 
-  '("xelatex -interaction nonstopmode %f"
-     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+;; (setq org-latex-to-pdf-process 
+;;   '("xelatex -interaction nonstopmode %f"
+;;      "xelatex -interaction nonstopmode %f")) ;; for multiple passes
 
-;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
-(org-babel-do-load-languages
- 'org-babel-load-languages
-  '( (ditaa . t)         
-     (emacs-lisp . t)   
-   ))
+;; ;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;   '( (ditaa . t)         
+;;      (emacs-lisp . t)   
+;;    ))
 
 (require 'ace-jump-mode)
 (set-face-foreground 'ace-jump-face-foreground "tomato")
@@ -1297,7 +1314,7 @@ Position the cursor at its beginning, according to the current mode."
 (diminish 'eldoc-mode)
 (diminish 'guide-key-mode)
 (diminish 'smartparens-mode)
-(diminish 'yas-minor-mode)
+;; (diminish 'yas-minor-mode)
 (diminish 'abbrev-mode)
 (diminish 'ggtags-mode)
 (eval-after-load "rainbow-mode"

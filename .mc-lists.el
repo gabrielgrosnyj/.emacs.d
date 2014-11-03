@@ -9,8 +9,10 @@
         c-electric-colon
         c-electric-delete-forward
         c-electric-lt-gt
+        c-electric-paren
         c-electric-pound
         c-electric-semi&comma
+        c-indent-line-or-region
         c-up-conditional
         comment-dwim
         cua-insert-char-rectangle
@@ -43,6 +45,7 @@
         sp-wrap-cancel
         stp-decorate-atomic
         stp-decorate-cast
+        stp-decorate-move
         stp-decorate-shared-ptr
         wdired-finish-edit
         yas-expand
@@ -51,13 +54,17 @@
 
 (setq mc/cmds-to-run-once
       '(
+        c-mark-function
         describe-key-briefly
         ff-find-related-file
         ido-switch-buffer
+        kill-sentence
         minimap-toggle
         repeat
         sacha/search-word-backward
         sacha/search-word-forward
+        scroll-down-one-line
+        scroll-up-one-line
         stp-helm-swoop
         undefined
         wgrep-change-to-wgrep-mode
