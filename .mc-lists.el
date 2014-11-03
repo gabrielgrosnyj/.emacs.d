@@ -17,6 +17,7 @@
         cua-paste
         down-list
         eval-last-sexp
+        eval-print-last-sexp
         fill-paragraph
         forward-sexp
         ido-execute-command
