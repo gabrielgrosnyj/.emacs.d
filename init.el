@@ -55,6 +55,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 (global-auto-revert-mode)
+(global-prettify-symbols-mode)
 
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -667,7 +668,8 @@
 (require 'ido)
 (require 'flx-ido)
 (ido-mode 1)
-(ido-everywhere 1)
+;; c++-mode crash
+;; (ido-everywhere 1)
 (flx-ido-mode 1)
 ;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
@@ -842,16 +844,16 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (ac-config-default)
 ;; (setq ac-auto-show-menu t)
 ;; ;; (setq ac-ignore-case t)
-;; ;; (setq ac-ignore-case 'smart)
-;; (setq ac-ignore-case t)
+;; (setq ac-ignore-case 'smart)
+;; ;; (setq ac-ignore-case t)
 ;; (setq ac-delay 0.05)
-;; ;; (setq ac-show-menu-immediately-on-auto-complete t)
-;; (define-key ac-mode-map (kbd "C-n") 'ac-next)
-;; (define-key ac-mode-map (kbd "C-p") 'ac-previous)
+;; ;; ;; (setq ac-show-menu-immediately-on-auto-complete t)
+;; ;; (define-key ac-mode-map (kbd "C-n") 'ac-next)
+;; ;; (define-key ac-mode-map (kbd "C-p") 'ac-previous)
 
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
-(setq company-idle-delay 0)
+(setq company-idle-delay 0.01)
 (setq company-minimum-prefix-length 1)
 (setq company-transformers '(company-sort-by-occurrence))
 ;; (define-key company-mode-map (kbd "C-n") 'company-select-next)
@@ -1250,43 +1252,43 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-foreground 'helm-match "#DDDDDD")
 (set-face-background 'helm-match "#111111")
 
-(require 'org)
-;; (require 'ox-odt)
-(require 'org-latex)
+;; (require 'org)
+;; ;; (require 'ox-odt)
+;; (require 'org-latex)
 
-(setq user-full-name "Stefán Pétursson")
-(setq org-export-latex-format-toc-function (lambda (bla)))
-(add-to-list 'org-export-latex-classes
-  '("stp-org-article"
-"\\documentclass[11pt,a4paper]{article}
-\\usepackage{fontspec}
-\\usepackage{graphicx} 
-\\usepackage{hyperref}
-\\defaultfontfeatures{Mapping=tex-text}
-\\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
-\\usepackage{geometry}
-\\geometry{a4paper, textwidth=6.5in, textheight=10in,
-            marginparsep=7pt, marginparwidth=.6in}
-\\pagestyle{empty}
-\\title{}
-      [NO-DEFAULT-PACKAGES]
-      [NO-PACKAGES]"
-     ("\\section{%s}" . "\\section*{%s}")
-     ("\\subsection{%s}" . "\\subsection*{%s}")
-     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+;; (setq user-full-name "Stefán Pétursson")
+;; (setq org-export-latex-format-toc-function (lambda (bla)))
+;; (add-to-list 'org-export-latex-classes
+;;   '("stp-org-article"
+;; "\\documentclass[11pt,a4paper]{article}
+;; \\usepackage{fontspec}
+;; \\usepackage{graphicx} 
+;; \\usepackage{hyperref}
+;; \\defaultfontfeatures{Mapping=tex-text}
+;; \\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
+;; \\usepackage{geometry}
+;; \\geometry{a4paper, textwidth=6.5in, textheight=10in,
+;;             marginparsep=7pt, marginparwidth=.6in}
+;; \\pagestyle{empty}
+;; \\title{}
+;;       [NO-DEFAULT-PACKAGES]
+;;       [NO-PACKAGES]"
+;;      ("\\section{%s}" . "\\section*{%s}")
+;;      ("\\subsection{%s}" . "\\subsection*{%s}")
+;;      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-(setq org-latex-to-pdf-process 
-  '("xelatex -interaction nonstopmode %f"
-     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+;; (setq org-latex-to-pdf-process 
+;;   '("xelatex -interaction nonstopmode %f"
+;;      "xelatex -interaction nonstopmode %f")) ;; for multiple passes
 
-;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
-(org-babel-do-load-languages
- 'org-babel-load-languages
-  '( (ditaa . t)         
-     (emacs-lisp . t)   
-   ))
+;; ;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;   '( (ditaa . t)         
+;;      (emacs-lisp . t)   
+;;    ))
 
 (require 'ace-jump-mode)
 (set-face-foreground 'ace-jump-face-foreground "tomato")
@@ -1299,7 +1301,7 @@ Position the cursor at its beginning, according to the current mode."
 (diminish 'eldoc-mode)
 (diminish 'guide-key-mode)
 (diminish 'smartparens-mode)
-(diminish 'yas-minor-mode)
+;; (diminish 'yas-minor-mode)
 (diminish 'abbrev-mode)
 (diminish 'ggtags-mode)
 (eval-after-load "rainbow-mode"
