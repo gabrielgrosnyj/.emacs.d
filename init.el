@@ -3,43 +3,6 @@
 ;; (set-keyboard-coding-system 'utf-8)
 ;; (set-terminal-coding-system 'utf-8)
 
-(require 'org-install)
-(require 'org-latex)
-
-(setq user-full-name "Stefán Pétursson")
-(setq org-export-latex-format-toc-function (lambda (bla)))
-(add-to-list 'org-export-latex-classes
-  '("stp-org-article"
-"\\documentclass[11pt,a4paper]{article}
-\\usepackage{fontspec}
-\\usepackage{graphicx} 
-\\usepackage{hyperref}
-\\defaultfontfeatures{Mapping=tex-text}
-\\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
-\\usepackage{geometry}
-\\geometry{a4paper, textwidth=6.5in, textheight=10in,
-            marginparsep=7pt, marginparwidth=.6in}
-\\pagestyle{empty}
-\\title{}
-      [NO-DEFAULT-PACKAGES]
-      [NO-PACKAGES]"
-     ("\\section{%s}" . "\\section*{%s}")
-     ("\\subsection{%s}" . "\\subsection*{%s}")
-     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-     ("\\paragraph{%s}" . "\\paragraph*{%s}")
-     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-(setq org-latex-to-pdf-process 
-  '("xelatex -interaction nonstopmode %f"
-     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
-
-;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
-(org-babel-do-load-languages
- 'org-babel-load-languages
-  '( (ditaa . t)         
-     (emacs-lisp . t)   
-   ))
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -92,6 +55,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 (global-auto-revert-mode)
+(global-prettify-symbols-mode)
 
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -294,7 +258,8 @@
   (ggtags-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
-  (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  ;; (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
@@ -649,7 +614,12 @@
      hl-line+
      ido-ubiquitous
      ;; number-font-lock-mode
-     recentf-ext)))
+     recentf-ext
+     ace-jump-mode
+     company
+     diminish
+     fold-this
+)))
 
 (condition-case nil
     (init--install-packages)
@@ -698,7 +668,8 @@
 (require 'ido)
 (require 'flx-ido)
 (ido-mode 1)
-(ido-everywhere 1)
+;; c++-mode crash
+;; (ido-everywhere 1)
 (flx-ido-mode 1)
 ;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
@@ -867,16 +838,35 @@ If REGEXP is non-nil, treat STRING as a regular expression."
                 ("\\.cmake\\'" . cmake-mode))
               auto-mode-alist))
 
-;; (add-to-list 'load-path "~/.emacs.d/plugins/ac")
-(require 'auto-complete-config)
-;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac/ac-dict")
-(ac-config-default)
-(setq ac-auto-show-menu t)
-;; (setq ac-ignore-case t)
+;; ;; (add-to-list 'load-path "~/.emacs.d/plugins/ac")
+;; (require 'auto-complete-config)
+;; ;; (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac/ac-dict")
+;; (ac-config-default)
+;; (setq ac-auto-show-menu t)
+;; ;; (setq ac-ignore-case t)
 ;; (setq ac-ignore-case 'smart)
-(setq ac-ignore-case t)
-(setq ac-delay 0.05)
-;; (setq ac-show-menu-immediately-on-auto-complete t)
+;; ;; (setq ac-ignore-case t)
+;; (setq ac-delay 0.05)
+;; ;; ;; (setq ac-show-menu-immediately-on-auto-complete t)
+;; ;; (define-key ac-mode-map (kbd "C-n") 'ac-next)
+;; ;; (define-key ac-mode-map (kbd "C-p") 'ac-previous)
+
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-idle-delay 0.01)
+(setq company-minimum-prefix-length 1)
+(setq company-transformers '(company-sort-by-occurrence))
+;; (define-key company-mode-map (kbd "C-n") 'company-select-next)
+;; (define-key company-mode-map (kbd "C-p") 'company-select-previous)
+;; (setq company-auto-complete t)
+
+(setq company-backends '((company-elisp company-dabbrev-code)
+                         company-nxml
+                         company-cmake
+                         (company-keywords company-dabbrev-code company-yasnippet company-gtags)
+                         company-files 
+                         company-dabbrev
+                         ))
 
 (require 'yasnippet) ;; not yasnippet-bundle
 ;; (yas/initialize)
@@ -886,7 +876,11 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (yas-global-mode 1)
 
 (global-set-key (kbd "C-M-m") 'mc/mark-next-like-this)
+(global-set-key [(control meta shift m)] 'mc/unmark-next-like-this)
+(global-set-key (kbd "C-M-n") 'mc/skip-to-next-like-this)
+(global-set-key (kbd "C-M-,") 'mc/mark-all-symbols-like-this-in-defun)
 (global-set-key (kbd "C-æ") 'er/expand-region)
+(global-set-key (kbd "C-Æ") 'er/contract-region)
 
 (defun minimap-toggle ()
   "Toggle minimap for current buffer."
@@ -918,10 +912,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 (add-hook 'LaTeX-mode-hook 'TeX-fold-mode)
 
-(defun my-tex-hook ()
-  (setq ac-sources (append '(ac-source-yasnippet) ac-sources)))
+;; (defun my-tex-hook ()
+;;   (setq ac-sources (append '(ac-source-yasnippet) ac-sources)))
 
-(add-hook 'LaTeX-mode-hook 'my-tex-hook)
+;; (add-hook 'LaTeX-mode-hook 'my-tex-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -942,7 +936,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
 (setq csharp-want-imenu nil)
 
-(load "~/.emacs.d/plugins/telli/telli.el")
+;; (load "~/.emacs.d/plugins/telli/telli.el")
 
 ;; (require 'auto-complete-etags)
 (setq tags-revert-without-query t)
@@ -1254,6 +1248,64 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-background 'helm-swoop-target-line-face "#2A2A2A")
 (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
 (set-face-background 'helm-swoop-target-word-face "#555555")
+(require 'helm-match-plugin)
+(set-face-foreground 'helm-match "#DDDDDD")
+(set-face-background 'helm-match "#111111")
+
+;; (require 'org)
+;; ;; (require 'ox-odt)
+;; (require 'org-latex)
+
+;; (setq user-full-name "Stefán Pétursson")
+;; (setq org-export-latex-format-toc-function (lambda (bla)))
+;; (add-to-list 'org-export-latex-classes
+;;   '("stp-org-article"
+;; "\\documentclass[11pt,a4paper]{article}
+;; \\usepackage{fontspec}
+;; \\usepackage{graphicx} 
+;; \\usepackage{hyperref}
+;; \\defaultfontfeatures{Mapping=tex-text}
+;; \\setromanfont [Ligatures={Common}, Variant=01]{Linux Libertine O}
+;; \\usepackage{geometry}
+;; \\geometry{a4paper, textwidth=6.5in, textheight=10in,
+;;             marginparsep=7pt, marginparwidth=.6in}
+;; \\pagestyle{empty}
+;; \\title{}
+;;       [NO-DEFAULT-PACKAGES]
+;;       [NO-PACKAGES]"
+;;      ("\\section{%s}" . "\\section*{%s}")
+;;      ("\\subsection{%s}" . "\\subsection*{%s}")
+;;      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+;;      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+;;      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+;; (setq org-latex-to-pdf-process 
+;;   '("xelatex -interaction nonstopmode %f"
+;;      "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+
+;; ;; (setq org-ditaa-jar-path "e:/dev/org-7.7/contrib/scripts/ditaa.jar")
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;   '( (ditaa . t)         
+;;      (emacs-lisp . t)   
+;;    ))
+
+(require 'ace-jump-mode)
+(set-face-foreground 'ace-jump-face-foreground "tomato")
+(global-set-key (kbd "M-A") 'ace-jump-mode)
+(global-set-key (kbd "C-+") 'ace-jump-mode)
+
+(require 'diminish)
+(diminish 'isearch-mode (string 32 #x279c))
+(diminish 'undo-tree-mode)
+(diminish 'eldoc-mode)
+(diminish 'guide-key-mode)
+(diminish 'smartparens-mode)
+;; (diminish 'yas-minor-mode)
+(diminish 'abbrev-mode)
+(diminish 'ggtags-mode)
+(eval-after-load "rainbow-mode"
+  '(diminish 'rainbow-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1548,3 +1600,4 @@ Position the cursor at its beginning, according to the current mode."
 
 ;; (dired-get-marked-files t current-prefix-arg)
 
+ 

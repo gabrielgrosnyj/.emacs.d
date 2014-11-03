@@ -29,6 +29,7 @@
               (insert "#include <vector>\n")
               (insert "#include <chrono>\n")
               (insert "#include <ctime>\n")
+              (insert "#include <memory>\n")
               (insert "\n")
               (insert "using namespace std;\n")
               (insert "\n")
