@@ -266,6 +266,7 @@
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
   (local-set-key (kbd "C-c m") 'stp-decorate-move)
   (local-set-key (kbd "C-c a") 'stp-decorate-atomic)
+  (local-set-key (kbd "C-c v") 'stp-decorate-vector)
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
@@ -417,37 +418,43 @@
     (expand-file-name filename)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun move-text-internal (arg)
+  (cond
+   ((and mark-active transient-mark-mode)
+    (if (> (point) (mark))
+        (exchange-point-and-mark))
+    (let ((column (current-column))
+          (text (delete-and-extract-region (point) (mark))))
+      (forward-line arg)
+      (move-to-column column t)
+      (set-mark (point))
+      (insert text)
+      (exchange-point-and-mark)
+      (setq deactivate-mark nil)))
+   (t
+    (let ((column (current-column)))
+      (beginning-of-line)
+      (when (or (> arg 0) (not (bobp)))
+        (forward-line)
+        (when (or (< arg 0) (not (eobp)))
+          (transpose-lines arg))
+        (when (< arg 0)
+          (forward-line -1))
+        (forward-line -1))
+      (move-to-column column t)))))
 
-(defun move-text-internal (arg) 
-   (cond 
-    ((and mark-active transient-mark-mode) 
-     (if (> (point) (mark)) 
-        (exchange-point-and-mark)) 
-     (let ((column (current-column)) 
-          (text (delete-and-extract-region (point) (mark)))) 
-       (forward-line arg) 
-       (move-to-column column t) 
-       (set-mark (point)) 
-       (insert text) 
-       (exchange-point-and-mark) 
-       (setq deactivate-mark nil))) 
-    (t 
-     (beginning-of-line) 
-     (when (or (> arg 0) (not (bobp))) 
-       (forward-line) 
-       (when (or (< arg 0) (not (eobp))) 
-        (transpose-lines arg)) 
-       (forward-line -1))))) 
-(defun move-text-down (arg) 
-   "Move region (transient-mark-mode active) or current line 
-  arg lines down." 
-   (interactive "*p") 
-   (move-text-internal arg)) 
-(defun move-text-up (arg) 
-   "Move region (transient-mark-mode active) or current line 
-  arg lines up." 
-   (interactive "*p") 
-   (move-text-internal (- arg))) 
+(defun move-text-down (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines down."
+  (interactive "*p")
+  (move-text-internal arg))
+
+(defun move-text-up (arg)
+  "Move region (transient-mark-mode active) or current line
+  arg lines up."
+  (interactive "*p")
+  (move-text-internal (- arg)))
+
 (global-set-key [(meta shift p)] 'move-text-up) 
 (global-set-key [(meta shift n)] 'move-text-down) 
 
@@ -1029,6 +1036,12 @@ If REGEXP is non-nil, treat STRING as a regular expression."
   (if x
       (stp-undecorate-region "std::atomic<" ">")
     (stp-decorate-region "std::atomic<" ">")))
+
+(defun stp-decorate-vector (x)
+  (interactive "P")
+  (if x
+      (stp-undecorate-region "std::vector<" ">")
+    (stp-decorate-region "std::vector<" ">")))
 
 (defun stp-undecorate-region (before after)
   (let (from to str out)
