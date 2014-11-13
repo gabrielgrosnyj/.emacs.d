@@ -18,6 +18,7 @@
         cua-insert-char-rectangle
         cua-paste
         down-list
+        electric-newline-and-maybe-indent
         eval-last-sexp
         eval-print-last-sexp
         fill-paragraph
