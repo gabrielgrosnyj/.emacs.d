@@ -1320,6 +1320,7 @@ Position the cursor at its beginning, according to the current mode."
 (eval-after-load "rainbow-mode"
   '(diminish 'rainbow-mode))
 
+(setq tags-table-list '("~/VCTAGS" "c:/Qt/5.1.1/msvc2012/include/TAGS"))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)
