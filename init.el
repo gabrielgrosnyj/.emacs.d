@@ -256,11 +256,13 @@
   (setq c-basic-offset 4)
   ;; (xgtags-mode)
   (ggtags-mode)
+  (irony-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
   ;; (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
+  (local-set-key (kbd "<C-return>") 'stp-company-irony)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
@@ -270,6 +272,10 @@
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+(add-hook 'c-mode-hook 'irony-mode)
+
+(setq w32-pipe-read-delay 0)
 
 (defun is-c-mode-derived ()
   (let ((current-mode (buffer-local-value 'major-mode (current-buffer))))
@@ -623,6 +629,8 @@
      ;; number-font-lock-mode
      recentf-ext
      ace-jump-mode
+     irony
+     company-irony
      company
      diminish
      fold-this
@@ -867,13 +875,16 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (define-key company-mode-map (kbd "C-p") 'company-select-previous)
 ;; (setq company-auto-complete t)
 
-(setq company-backends '((company-elisp company-dabbrev-code)
-                         company-nxml
-                         company-cmake
-                         (company-keywords company-dabbrev-code company-yasnippet company-gtags)
-                         company-files 
-                         company-dabbrev
-                         ))
+(setq company-backends '((company-elisp :with company-yasnippet) 
+                         (company-dabbrev-code :with company-yasnippet company-gtags company-keywords)
+                         company-nxml company-cmake
+                         company-files company-dabbrev))
+
+(defun stp-company-irony (command &optional arg &rest ignored)
+  (interactive (list 'interactive))
+  (company-abort)
+  (company-irony command arg)
+  )
 
 (require 'yasnippet) ;; not yasnippet-bundle
 ;; (yas/initialize)
