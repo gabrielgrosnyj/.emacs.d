@@ -871,6 +871,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (setq company-idle-delay 0.01)
 (setq company-minimum-prefix-length 1)
 (setq company-transformers '(company-sort-by-occurrence))
+(setq company-require-match 'never)
 ;; (define-key company-mode-map (kbd "C-n") 'company-select-next)
 ;; (define-key company-mode-map (kbd "C-p") 'company-select-previous)
 ;; (setq company-auto-complete t)
@@ -883,8 +884,9 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (defun stp-company-irony (command &optional arg &rest ignored)
   (interactive (list 'interactive))
   (company-abort)
-  (company-irony command arg)
+  (company-irony command arg ignored)
   )
+
 
 (require 'yasnippet) ;; not yasnippet-bundle
 ;; (yas/initialize)
