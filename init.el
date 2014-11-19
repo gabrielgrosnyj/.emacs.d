@@ -292,6 +292,18 @@
     nil
     ))
 
+
+(defun comment-or-uncomment-region-or-line ()
+  "Comments or uncomments the region or the current line if there's no active region."
+  (interactive)
+  (let (beg end)
+    (if (region-active-p)
+        (setq beg (region-beginning) end (region-end))
+      (setq beg (line-beginning-position) end (line-end-position)))
+    (comment-or-uncomment-region beg end)))
+(global-set-key (kbd "C-M-;") 'comment-or-uncomment-region-or-line)
+
+
 (add-hook 'sp-autoinsert-inhibit-functions 'my-c-mode-open-brace)
 
 (add-hook 'eshell-first-time-mode-hook (lambda () 
@@ -1327,7 +1339,7 @@ Position the cursor at its beginning, according to the current mode."
 (diminish 'eldoc-mode)
 (diminish 'guide-key-mode)
 (diminish 'smartparens-mode)
-;; (diminish 'yas-minor-mode)
+(diminish 'yas-minor-mode)
 (diminish 'abbrev-mode)
 (diminish 'ggtags-mode)
 (eval-after-load "rainbow-mode"
