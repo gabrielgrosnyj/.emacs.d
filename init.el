@@ -256,11 +256,13 @@
   (setq c-basic-offset 4)
   ;; (xgtags-mode)
   (ggtags-mode)
+  (irony-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
   ;; (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
+  (local-set-key (kbd "<C-return>") 'stp-company-irony)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
@@ -270,6 +272,10 @@
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+(add-hook 'c-mode-hook 'irony-mode)
+
+(setq w32-pipe-read-delay 0)
 
 (defun is-c-mode-derived ()
   (let ((current-mode (buffer-local-value 'major-mode (current-buffer))))
@@ -285,6 +291,18 @@
     (c-indent-line)
     nil
     ))
+
+
+(defun comment-or-uncomment-region-or-line ()
+  "Comments or uncomments the region or the current line if there's no active region."
+  (interactive)
+  (let (beg end)
+    (if (region-active-p)
+        (setq beg (region-beginning) end (region-end))
+      (setq beg (line-beginning-position) end (line-end-position)))
+    (comment-or-uncomment-region beg end)))
+(global-set-key (kbd "C-M-;") 'comment-or-uncomment-region-or-line)
+
 
 (add-hook 'sp-autoinsert-inhibit-functions 'my-c-mode-open-brace)
 
@@ -623,6 +641,8 @@
      ;; number-font-lock-mode
      recentf-ext
      ace-jump-mode
+     irony
+     company-irony
      company
      diminish
      fold-this
@@ -863,17 +883,22 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (setq company-idle-delay 0.01)
 (setq company-minimum-prefix-length 1)
 (setq company-transformers '(company-sort-by-occurrence))
+(setq company-require-match 'never)
 ;; (define-key company-mode-map (kbd "C-n") 'company-select-next)
 ;; (define-key company-mode-map (kbd "C-p") 'company-select-previous)
 ;; (setq company-auto-complete t)
 
-(setq company-backends '((company-elisp company-dabbrev-code)
-                         company-nxml
-                         company-cmake
-                         (company-keywords company-dabbrev-code company-yasnippet company-gtags)
-                         company-files 
-                         company-dabbrev
-                         ))
+(setq company-backends '((company-elisp :with company-yasnippet) 
+                         (company-dabbrev-code :with company-yasnippet company-gtags company-keywords)
+                         company-nxml company-cmake
+                         company-files company-dabbrev))
+
+(defun stp-company-irony (command &optional arg &rest ignored)
+  (interactive (list 'interactive))
+  (company-abort)
+  (company-irony command arg ignored)
+  )
+
 
 (require 'yasnippet) ;; not yasnippet-bundle
 ;; (yas/initialize)
@@ -1314,12 +1339,13 @@ Position the cursor at its beginning, according to the current mode."
 (diminish 'eldoc-mode)
 (diminish 'guide-key-mode)
 (diminish 'smartparens-mode)
-;; (diminish 'yas-minor-mode)
+(diminish 'yas-minor-mode)
 (diminish 'abbrev-mode)
 (diminish 'ggtags-mode)
 (eval-after-load "rainbow-mode"
   '(diminish 'rainbow-mode))
 
+(setq tags-table-list '("~/VCTAGS" "c:/Qt/5.1.1/msvc2012/include/TAGS"))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)
