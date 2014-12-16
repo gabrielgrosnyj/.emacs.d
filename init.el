@@ -646,7 +646,8 @@
      company
      diminish
      fold-this
-)))
+     csharp-mode
+     )))
 
 (condition-case nil
     (init--install-packages)
@@ -965,8 +966,8 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 
 ;;; .emacs (don't put in (require 'csharp-mode))
-(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(setq csharp-want-imenu nil)
+;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+;; (setq csharp-want-imenu nil)
 
 ;; (load "~/.emacs.d/plugins/telli/telli.el")
 
@@ -1346,6 +1347,7 @@ Position the cursor at its beginning, according to the current mode."
   '(diminish 'rainbow-mode))
 
 (setq tags-table-list '("~/VCTAGS" "c:/Qt/5.1.1/msvc2012/include/TAGS"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)
@@ -1412,7 +1414,7 @@ Position the cursor at its beginning, according to the current mode."
 ;;   (visit-tags-table "TAGS")
 ;;   ;; (refresh-all-tags)
 ;; )
-  
+
 
 ;; (defun get-sln-files ()
 ;;   (save-excursion
@@ -1639,4 +1641,4 @@ Position the cursor at its beginning, according to the current mode."
 
 ;; (dired-get-marked-files t current-prefix-arg)
 
- 
+
