@@ -149,7 +149,7 @@
 (setq dired-dwim-target t
       dired-recursive-copies t
       dired-listing-switches "-lha"
-      dired-recursive-deletes 'top)
+      dired-recursive-deletes 'always)
 
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
@@ -270,7 +270,8 @@
   (local-set-key (kbd "C-c a") 'stp-decorate-atomic)
   (local-set-key (kbd "C-c v") 'stp-decorate-vector)
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
-  (local-set-key (kbd "C-c c") 'stp-decorate-cast))
+  (local-set-key (kbd "C-c c") 'stp-decorate-cast)
+  (local-set-key (kbd "C-c w") 'stp-align-indent))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
 (add-hook 'c-mode-hook 'irony-mode)
@@ -890,9 +891,9 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (setq company-auto-complete t)
 
 (setq company-backends '((company-elisp :with company-yasnippet) 
-                         (company-dabbrev-code :with company-yasnippet company-gtags company-keywords)
+                         (company-dabbrev-code :with company-yasnippet company-keywords)
                          company-nxml company-cmake
-                         company-files company-dabbrev))
+                         company-files))
 
 (defun stp-company-irony (command &optional arg &rest ignored)
   (interactive (list 'interactive))
@@ -1272,6 +1273,8 @@ Position the cursor at its beginning, according to the current mode."
   ;;; Save current position to mark ring
 (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
+(setq helm-imenu-fuzzy-match t)
+
 (require 'helm-swoop)
 (defun stp-helm-swoop ()
   (interactive)
@@ -1347,6 +1350,16 @@ Position the cursor at its beginning, according to the current mode."
   '(diminish 'rainbow-mode))
 
 (setq tags-table-list '("~/VCTAGS" "c:/Qt/5.1.1/msvc2012/include/TAGS"))
+
+(defun stp-align-indent ()
+  (interactive)
+  (save-excursion
+    (backward-paragraph)
+    (set-mark (point))
+    (forward-paragraph)
+    (delete-trailing-whitespace (mark) (point))
+    (indent-region (mark) (point))
+    (align (mark) (point))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

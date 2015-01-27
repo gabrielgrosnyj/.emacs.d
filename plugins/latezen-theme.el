@@ -103,7 +103,7 @@ Also bind `class' to ((class color) (min-colors 89))."
    `(default ((t (:foreground ,latezen-fg :background ,latezen-bg))))
    `(cursor ((t (:foreground ,latezen-fg :background ,latezen-fg+1))))
    `(escape-glyph ((t (:foreground ,latezen-yellow :bold t))))
-   `(fringe ((t (:foreground ,latezen-fg :background ,latezen-bg+1))))
+   `(fringe ((t (:foreground ,latezen-fg :background ,latezen-bg))))
    `(header-line ((t (:foreground ,latezen-yellow
                                   :background ,latezen-bg-1
                                   :box (:line-width -1 :style released-button)))))
