@@ -1354,12 +1354,27 @@ Position the cursor at its beginning, according to the current mode."
 (defun stp-align-indent ()
   (interactive)
   (save-excursion
-    (backward-paragraph)
-    (set-mark (point))
-    (forward-paragraph)
-    (delete-trailing-whitespace (mark) (point))
-    (indent-region (mark) (point))
-    (align (mark) (point))))
+    (let ((b 0) (bp 0) (bul 0)
+          (e 0) (ep 0) (eul 0))
+      (save-excursion
+        (backward-paragraph)
+        (setq bp (point)))
+      (save-excursion
+        (ignore-errors
+          (backward-up-list)
+          (setq bul (point))))
+      (save-excursion
+        (forward-paragraph)
+        (setq ep (point)))
+      (save-excursion
+        (ignore-errors
+          (backward-up-list -1)
+          (setq eul (point))))
+      (setq b (max bp bul))
+      (setq e (max ep eul))
+      (delete-trailing-whitespace b e)
+      (indent-region b e)
+      (align b e))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

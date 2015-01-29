@@ -66,6 +66,7 @@
         sacha/search-word-forward
         scroll-down-one-line
         scroll-up-one-line
+        stp-align-indent
         stp-helm-swoop
         undefined
         wgrep-change-to-wgrep-mode
