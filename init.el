@@ -1371,7 +1371,7 @@ Position the cursor at its beginning, according to the current mode."
           (backward-up-list -1)
           (setq eul (point))))
       (setq b (max bp bul))
-      (setq e (max ep eul))
+      (setq e (min ep eul))
       (delete-trailing-whitespace b e)
       (indent-region b e)
       (align b e))))
