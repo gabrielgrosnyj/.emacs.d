@@ -337,6 +337,14 @@
     (call-interactively 'compile)
     ))
 
+
+(defun compile-clang-cl ()
+  (interactive)
+  (let ((file (file-name-nondirectory (buffer-file-name))))
+    (setq compile-command (concat "clang-cl.exe -D_HAS_EXCEPTIONS=0 " file " && ./" (file-name-sans-extension file) ".exe"))
+    (call-interactively 'compile)
+    ))
+
 (defun compile-sln ()
   (interactive)
   (let ((sln (car (file-expand-wildcards "*.sln"))))
@@ -1354,8 +1362,8 @@ Position the cursor at its beginning, according to the current mode."
 (defun stp-align-indent ()
   (interactive)
   (save-excursion
-    (let ((b 0) (bp 0) (bul 0)
-          (e 0) (ep 0) (eul 0))
+    (let ((b 0) (bp (point-min)) (bul (point-min))
+          (e 0) (ep (point-max)) (eul (point-max)))
       (save-excursion
         (backward-paragraph)
         (setq bp (point)))
