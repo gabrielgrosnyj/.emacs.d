@@ -656,6 +656,7 @@
      diminish
      fold-this
      csharp-mode
+     fullframe
      )))
 
 (condition-case nil
@@ -671,6 +672,9 @@
 (require 'undo-tree)
 (global-undo-tree-mode)
 
+(require 'fullframe)
+(require 'magit)
+(fullframe magit-status magit-mode-quit-window)
 
 (require 'hl-line+)
 (defadvice switch-to-buffer (after switch-to-buffer-flash activate)
