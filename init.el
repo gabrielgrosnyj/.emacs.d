@@ -149,7 +149,7 @@
 (setq dired-dwim-target t
       dired-recursive-copies t
       dired-listing-switches "-lha"
-      dired-recursive-deletes 'top)
+      dired-recursive-deletes 'always)
 
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward)
@@ -270,7 +270,8 @@
   (local-set-key (kbd "C-c a") 'stp-decorate-atomic)
   (local-set-key (kbd "C-c v") 'stp-decorate-vector)
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
-  (local-set-key (kbd "C-c c") 'stp-decorate-cast))
+  (local-set-key (kbd "C-c c") 'stp-decorate-cast)
+  (local-set-key (kbd "C-c w") 'stp-align-indent))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
 (add-hook 'c-mode-hook 'irony-mode)
@@ -333,6 +334,14 @@
   (interactive)
   (let ((file (file-name-nondirectory (buffer-file-name))))
     (setq compile-command (concat "cl.exe -EHsc " file " && ./" (file-name-sans-extension file) ".exe"))
+    (call-interactively 'compile)
+    ))
+
+
+(defun compile-clang-cl ()
+  (interactive)
+  (let ((file (file-name-nondirectory (buffer-file-name))))
+    (setq compile-command (concat "clang-cl.exe -D_HAS_EXCEPTIONS=0 " file " && ./" (file-name-sans-extension file) ".exe"))
     (call-interactively 'compile)
     ))
 
@@ -646,7 +655,9 @@
      company
      diminish
      fold-this
-)))
+     csharp-mode
+     fullframe
+     )))
 
 (condition-case nil
     (init--install-packages)
@@ -661,6 +672,9 @@
 (require 'undo-tree)
 (global-undo-tree-mode)
 
+(require 'fullframe)
+(require 'magit)
+(fullframe magit-status magit-mode-quit-window)
 
 (require 'hl-line+)
 (defadvice switch-to-buffer (after switch-to-buffer-flash activate)
@@ -889,9 +903,9 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;; (setq company-auto-complete t)
 
 (setq company-backends '((company-elisp :with company-yasnippet) 
-                         (company-dabbrev-code :with company-yasnippet company-gtags company-keywords)
+                         (company-dabbrev-code :with company-yasnippet company-keywords)
                          company-nxml company-cmake
-                         company-files company-dabbrev))
+                         company-files))
 
 (defun stp-company-irony (command &optional arg &rest ignored)
   (interactive (list 'interactive))
@@ -965,8 +979,8 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 
 ;;; .emacs (don't put in (require 'csharp-mode))
-(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(setq csharp-want-imenu nil)
+;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+;; (setq csharp-want-imenu nil)
 
 ;; (load "~/.emacs.d/plugins/telli/telli.el")
 
@@ -1271,6 +1285,8 @@ Position the cursor at its beginning, according to the current mode."
   ;;; Save current position to mark ring
 (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
+(setq helm-imenu-fuzzy-match t)
+
 (require 'helm-swoop)
 (defun stp-helm-swoop ()
   (interactive)
@@ -1346,6 +1362,32 @@ Position the cursor at its beginning, according to the current mode."
   '(diminish 'rainbow-mode))
 
 (setq tags-table-list '("~/VCTAGS" "c:/Qt/5.1.1/msvc2012/include/TAGS"))
+
+(defun stp-align-indent ()
+  (interactive)
+  (save-excursion
+    (let ((b 0) (bp (point-min)) (bul (point-min))
+          (e 0) (ep (point-max)) (eul (point-max)))
+      (save-excursion
+        (backward-paragraph)
+        (setq bp (point)))
+      (save-excursion
+        (ignore-errors
+          (backward-up-list)
+          (setq bul (point))))
+      (save-excursion
+        (forward-paragraph)
+        (setq ep (point)))
+      (save-excursion
+        (ignore-errors
+          (backward-up-list -1)
+          (setq eul (point))))
+      (setq b (max bp bul))
+      (setq e (min ep eul))
+      (delete-trailing-whitespace b e)
+      (indent-region b e)
+      (align b e))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)
@@ -1412,7 +1454,7 @@ Position the cursor at its beginning, according to the current mode."
 ;;   (visit-tags-table "TAGS")
 ;;   ;; (refresh-all-tags)
 ;; )
-  
+
 
 ;; (defun get-sln-files ()
 ;;   (save-excursion
@@ -1639,4 +1681,4 @@ Position the cursor at its beginning, according to the current mode."
 
 ;; (dired-get-marked-files t current-prefix-arg)
 
- 
+
