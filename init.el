@@ -1349,6 +1349,7 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-foreground 'ace-jump-face-foreground "tomato")
 (global-set-key (kbd "M-A") 'ace-jump-mode)
 (global-set-key (kbd "C-+") 'ace-jump-mode)
+(setq ace-jump-mode-scope 'window)
 
 (require 'diminish)
 (diminish 'isearch-mode (string 32 #x279c))
