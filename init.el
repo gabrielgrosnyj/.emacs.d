@@ -36,7 +36,7 @@
                          :foundry "outline" 
                          :family ,(if (eq 'windows-nt system-type)
                                      "Source Code Pro"
-                                   "Fira Mono"))))))
+                                   "Droid Sans Mono"))))))
 
 (setq indicate-empty-lines t)
 (setq system-time-locale "C")
@@ -843,6 +843,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (define-key ggtags-navigation-map (kbd "M-}") nil)
 (define-key ggtags-navigation-map [return] nil)
 (define-key ggtags-navigation-map "\r" nil)
+(global-set-key (kbd "M-*") 'pop-tag-mark)
 
 (require 'smex) ; Not needed if you use package.el
 (smex-initialize) ; Can be omitted. This might cause a (minimal) delay
