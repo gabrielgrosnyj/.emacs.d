@@ -675,6 +675,7 @@
 (require 'fullframe)
 (require 'magit)
 (fullframe magit-status magit-mode-quit-window)
+(fullframe vc-annotate vc-annotate-quit-window)
 
 (require 'hl-line+)
 (defadvice switch-to-buffer (after switch-to-buffer-flash activate)
