@@ -3,6 +3,8 @@
 ;; (set-keyboard-coding-system 'utf-8)
 ;; (set-terminal-coding-system 'utf-8)
 
+(setq-default cursor-in-non-selected-windows nil)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -1308,6 +1310,8 @@ Position the cursor at its beginning, according to the current mode."
 (set-face-foreground 'helm-match "#DDDDDD")
 (set-face-background 'helm-match "#111111")
 
+(require 'auto-dim-other-buffers)
+(auto-dim-other-buffers-mode)
 ;; (require 'org)
 ;; ;; (require 'ox-odt)
 ;; (require 'org-latex)
