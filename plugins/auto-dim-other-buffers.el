@@ -59,14 +59,14 @@
   "Face (presumably dimmed somehow) for non-current buffers."
   :group 'auto-dim-other-buffers)
 
-(defface adob--face-default '((t :foreground "#636461")) "Default face for other buffers")
-(defface adob--face-function '((t :foreground "#a6a6ba")) "Function face for other buffers")
-(defface adob--face-constant '((t :foreground "#888888")) "Constant face for other buffers")
-(defface adob--face-keyword '((t :foreground "#9e9e9e")) "Keyword face for other buffers")
-(defface adob--face-type '((t :foreground "#909090")) "Type face for other buffers")
-(defface adob--face-variable '((t :foreground "#808080")) "Variable face for other buffers")
-(defface adob--face-string '((t :foreground "tomato4")) "String face for other buffers")
-(defface adob--face-preprocessor '((t :foreground "#808080")) "Preprocessor face for other buffers")
+(defface adob--face-default '((t :foreground "#737471")) "Default face for other buffers")
+(defface adob--face-function '((t :foreground "#b6b6bb")) "Function face for other buffers")
+(defface adob--face-constant '((t :foreground "#999999")) "Constant face for other buffers")
+(defface adob--face-keyword '((t :foreground "#aeaeae")) "Keyword face for other buffers")
+(defface adob--face-type '((t :foreground "#a0a0a0")) "Type face for other buffers")
+(defface adob--face-variable '((t :foreground "#909090")) "Variable face for other buffers")
+(defface adob--face-string '((t :foreground "IndianRed3")) "String face for other buffers")
+(defface adob--face-preprocessor '((t :foreground "#909090")) "Preprocessor face for other buffers")
 
 (defvar adob--dim-face-alist nil)
 
