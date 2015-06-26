@@ -12,7 +12,9 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(column-number-mode t)
- '(custom-safe-themes (quote ("8942d5e757ed5f18efe33d2366effd5ce867c00e125f6fc12fcf2a2f5253a99f" "cf3b9e992b68532e634aebe50b74ae65373cf5054d3fc4d8c4ea5ef437d2d12b" "501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" "72cc9ae08503b8e977801c6d6ec17043b55313cda34bcf0e6921f2f04cf2da56" default)))
+ '(custom-safe-themes
+   (quote
+    ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8942d5e757ed5f18efe33d2366effd5ce867c00e125f6fc12fcf2a2f5253a99f" "cf3b9e992b68532e634aebe50b74ae65373cf5054d3fc4d8c4ea5ef437d2d12b" "501caa208affa1145ccbb4b74b6cd66c3091e41c5bb66c677feda9def5eab19c" "72cc9ae08503b8e977801c6d6ec17043b55313cda34bcf0e6921f2f04cf2da56" default)))
  '(display-time-mode t)
  '(initial-buffer-choice "~/organize.org")
  '(menu-bar-mode nil)
@@ -258,13 +260,13 @@
   (setq c-basic-offset 4)
   ;; (xgtags-mode)
   (ggtags-mode)
-  (irony-mode)
+  ;; (irony-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
   ;; (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
-  (local-set-key (kbd "<C-return>") 'stp-company-irony)
+  ;; (local-set-key (kbd "<C-return>") 'stp-company-irony)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
@@ -276,7 +278,7 @@
   (local-set-key (kbd "C-c w") 'stp-align-indent))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
-(add-hook 'c-mode-hook 'irony-mode)
+;; (add-hook 'c-mode-hook 'irony-mode)
 
 (setq w32-pipe-read-delay 0)
 
@@ -971,7 +973,88 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (add-to-list 'load-path "~/.emacs.d/plugins")
-(require 'latezen-theme)
+;; (require 'latezen-theme)
+;; (load-theme 'solarized-light)
+;; (require 'lenlen-theme)
+
+(require 'helm)
+(require 'helm-config)
+
+(setq
+ helm-google-suggest-use-curl-p t
+ helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+ helm-quick-update t ; do not display invisible candidates
+ helm-idle-delay 0.01 ; be idle for this many seconds, before updating in delayed sources.
+ helm-input-idle-delay 0.01 ; be idle for this many seconds, before updating candidate buffer
+ helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+
+ ;; you can customize helm-do-grep to execute ack-grep
+ ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
+ ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
+ helm-split-window-default-side 'other ;; open helm buffer in another window
+ helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
+ ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+ ;;                                     '(picture-mode artist-mode))
+ helm-candidate-number-limit 200 ; limit the number of displayed canidates
+ helm-M-x-requires-pattern 0     ; show all candidates when set to 0
+ helm-boring-file-regexp-list
+ '("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$" "\\._darcs$" "\\.la$" "\\.o$" "\\.i$") ; do not show these files in helm buffer
+ helm-ff-file-name-history-use-recentf t
+ helm-move-to-line-cycle-in-source t ; move to end or beginning of source
+                                        ; when reaching top or bottom of source.
+ ;; ido-use-virtual-buffers t      ; Needed in helm-buffers-list
+ helm-buffers-fuzzy-matching t          ; fuzzy matching buffer names when non--nil
+                                        ; useful in helm-mini that lists buffers
+ )
+
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+
+  ;;; Save current position to mark ring
+(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+(setq helm-imenu-fuzzy-match t)
+
+(require 'helm-swoop)
+(defun stp-helm-swoop ()
+  (interactive)
+  (push-mark)
+  (helm-swoop))
+(global-set-key (kbd "C-S-s") 'stp-helm-swoop)
+(global-set-key (kbd "C-M-S-s") 'helm-swoop-back-to-last-point)
+(define-key isearch-mode-map (kbd "C-S-s") 'helm-swoop-from-isearch)
+(setq helm-swoop-split-direction 'split-window-horizontally)
+(require 'helm-match-plugin)
+
+(if t
+    ;; Light theme
+    (progn 
+      (require 'oldlace-theme)
+      (set-face-foreground 'default "#323232")
+      (set-cursor-color "#323232")
+      (set-face-background 'hl-line "#EAEAEA")
+      (set-face-background 'company-tooltip "gray90")
+      (set-face-background 'helm-selection "#DDDDDD")
+      (set-face-foreground 'helm-swoop-target-line-face "#2A2A2A")
+      (set-face-background 'helm-swoop-target-line-face "#CCCCCC")
+      (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
+      (set-face-background 'helm-swoop-target-word-face "#555555")
+      (set-face-attribute 'mode-line nil
+                          :box '(:line-width 1 :color "#000000")))
+  ;; Else dark theme
+  (progn
+    (set-face-background 'hl-line "#1A1A1A")
+    (require 'latezen-theme)
+    (set-face-background 'helm-selection "#2A2A2A")
+    (set-face-foreground 'helm-swoop-target-line-face "#888888")
+    (set-face-background 'helm-swoop-target-line-face "#2A2A2A")
+    (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
+    (set-face-background 'helm-swoop-target-word-face "#555555")
+    (set-face-foreground 'helm-match "#DDDDDD")
+    (set-face-background 'helm-match "#111111"))
+)
+;; (require 'light-soap-theme)
+
+;; (require 'minimal-light-theme)
 (require 'w32-fullscreen)
 (global-set-key [f11] 'w32-fullscreen)
 (autoload 'dos-mode "dos" "Edit Dos scripts." t)
@@ -1127,8 +1210,6 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (require 'man)
 (set-face-foreground 'Man-overstrike "#f5fffa")
 
-(set-face-background 'hl-line "#1A1A1A")
-
 (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
 (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
@@ -1255,64 +1336,8 @@ Position the cursor at its beginning, according to the current mode."
 (global-set-key (kbd "C-o") 'smart-open-line-above)
 (global-set-key (kbd "C-S-o") 'smart-open-line)
 
-(require 'helm)
-(require 'helm-config)
-
-(setq
- helm-google-suggest-use-curl-p t
- helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
- helm-quick-update t ; do not display invisible candidates
- helm-idle-delay 0.01 ; be idle for this many seconds, before updating in delayed sources.
- helm-input-idle-delay 0.01 ; be idle for this many seconds, before updating candidate buffer
- helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
-
- ;; you can customize helm-do-grep to execute ack-grep
- ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
- ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
- helm-split-window-default-side 'other ;; open helm buffer in another window
- helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
- ;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
- ;;                                     '(picture-mode artist-mode))
- helm-candidate-number-limit 200 ; limit the number of displayed canidates
- helm-M-x-requires-pattern 0     ; show all candidates when set to 0
- helm-boring-file-regexp-list
- '("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$" "\\._darcs$" "\\.la$" "\\.o$" "\\.i$") ; do not show these files in helm buffer
- helm-ff-file-name-history-use-recentf t
- helm-move-to-line-cycle-in-source t ; move to end or beginning of source
-                                        ; when reaching top or bottom of source.
- ;; ido-use-virtual-buffers t      ; Needed in helm-buffers-list
- helm-buffers-fuzzy-matching t          ; fuzzy matching buffer names when non--nil
-                                        ; useful in helm-mini that lists buffers
- )
-
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
-
-  ;;; Save current position to mark ring
-(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
-
-(setq helm-imenu-fuzzy-match t)
-
-(require 'helm-swoop)
-(defun stp-helm-swoop ()
-  (interactive)
-  (push-mark)
-  (helm-swoop))
-(global-set-key (kbd "C-S-s") 'stp-helm-swoop)
-(global-set-key (kbd "C-M-S-s") 'helm-swoop-back-to-last-point)
-(define-key isearch-mode-map (kbd "C-S-s") 'helm-swoop-from-isearch)
-(setq helm-swoop-split-direction 'split-window-horizontally)
-
-(set-face-background 'helm-selection "#2A2A2A")
-(set-face-foreground 'helm-swoop-target-line-face "#888888")
-(set-face-background 'helm-swoop-target-line-face "#2A2A2A")
-(set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
-(set-face-background 'helm-swoop-target-word-face "#555555")
-(require 'helm-match-plugin)
-(set-face-foreground 'helm-match "#DDDDDD")
-(set-face-background 'helm-match "#111111")
-
-(require 'auto-dim-other-buffers)
-(auto-dim-other-buffers-mode)
+;; (require 'auto-dim-other-buffers)
+;; (auto-dim-other-buffers-mode)
 ;; (require 'org)
 ;; ;; (require 'ox-odt)
 ;; (require 'org-latex)
@@ -1396,6 +1421,20 @@ Position the cursor at its beginning, according to the current mode."
       (indent-region b e)
       (align b e))))
 
+
+(defun stp-isearch-delete ()
+  "Delete the failed portion of the search string, or the last char if successful."
+  (interactive)
+  (with-isearch-suspended
+   (setq isearch-new-string
+         (substring
+          isearch-string 0 (or (isearch-fail-pos) (1- (length isearch-string))))
+         isearch-new-message
+         (mapconcat 'isearch-text-char-description isearch-new-string ""))))
+
+;; (define-key isearch-mode-map (kbd "<backspace>") 'stp-isearch-delete)
+;; (define-key isearch-mode-map (kbd "<backspace>") 'isearch-delete-char)
+(setq magit-last-seen-setup-instructions "1.4.0")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)

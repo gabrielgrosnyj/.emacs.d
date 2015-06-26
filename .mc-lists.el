@@ -6,12 +6,14 @@
         anchored-transpose
         backward-sexp
         backward-up-list
+        c-electric-brace
         c-electric-colon
         c-electric-delete-forward
         c-electric-lt-gt
         c-electric-paren
         c-electric-pound
         c-electric-semi&comma
+        c-electric-star
         c-indent-line-or-region
         c-up-conditional
         comment-dwim
@@ -36,6 +38,7 @@
         org-end-of-line
         org-force-self-insert
         org-self-insert-command
+        prelude-duplicate-current-line-or-region
         smart-open-line
         smart-open-line-above
         smart-open-line-above
