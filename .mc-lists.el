@@ -30,6 +30,7 @@
         kill-region
         kill-sexp
         mark-sexp
+        move-text-down
         my-move-forward-list
         next-error
         nxml-electric-slash
@@ -46,6 +47,7 @@
         sp--self-insert-command
         sp-cua-replace-region
         sp-self-insert-command
+        sp-slurp-hybrid-sexp
         sp-wrap-cancel
         stp-decorate-atomic
         stp-decorate-cast

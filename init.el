@@ -661,6 +661,9 @@
      fold-this
      csharp-mode
      fullframe
+     bm
+     rainbow-delimiters
+     helm-ag
      )))
 
 (condition-case nil
@@ -839,8 +842,9 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (define-key projectile-mode-map (kbd "C-c p a") nil)
 (global-set-key (kbd "C-c p G") 'projectile-grep)
 (global-set-key (kbd "C-c p g") 'my-projectile-grep)
-(global-set-key (kbd "C-c p a") 'ag-project)
+;; (global-set-key (kbd "C-c p a") 'ag-project)
 (global-set-key (kbd "C-c p A") 'ag-project-regexp)
+(global-set-key (kbd "C-c p a") 'helm-do-ag-project-root)
 
 (require 'ggtags)
 (define-key ggtags-navigation-map (kbd "M-<") nil)
@@ -1014,6 +1018,21 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 
 (setq helm-imenu-fuzzy-match t)
 
+(require 'helm-ag)
+(setq helm-ag-insert-at-point 'symbol)
+(global-set-key (kbd "C-*") 'helm-ag-pop-stack)
+
+(set-face-attribute 'helm-moccur-buffer nil
+                    :foreground "gray60"
+                    :underline t)
+
+(set-face-attribute 'helm-grep-lineno nil
+                    :foreground "gray30")
+
+(set-face-attribute 'helm-match nil
+                    :foreground "black"
+                    :weight 'bold)
+
 (require 'helm-swoop)
 (defun stp-helm-swoop ()
   (interactive)
@@ -1028,9 +1047,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (if t
     ;; Light theme
     (progn 
-      (require 'oldlace-theme)
-      (set-face-foreground 'default "#323232")
-      (set-cursor-color "#323232")
+      (require 'minimal-light-theme)
+      ;; (require 'oldlace-theme)
+      ;; (set-face-foreground 'default "#323232")
+      ;; (set-cursor-color "#323232")
       (set-face-background 'hl-line "#EAEAEA")
       (set-face-background 'company-tooltip "gray90")
       (set-face-background 'helm-selection "#DDDDDD")
@@ -1039,7 +1059,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
       (set-face-background 'helm-swoop-target-word-face "#555555")
       (set-face-attribute 'mode-line nil
-                          :box '(:line-width 1 :color "#000000")))
+                          :box '(:line-width 2 :color "#000000")))
   ;; Else dark theme
   (progn
     (set-face-background 'hl-line "#1A1A1A")
@@ -1054,7 +1074,6 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 )
 ;; (require 'light-soap-theme)
 
-;; (require 'minimal-light-theme)
 (require 'w32-fullscreen)
 (global-set-key [f11] 'w32-fullscreen)
 (autoload 'dos-mode "dos" "Edit Dos scripts." t)
@@ -1432,9 +1451,30 @@ Position the cursor at its beginning, according to the current mode."
          isearch-new-message
          (mapconcat 'isearch-text-char-description isearch-new-string ""))))
 
+
+(require 'bm)
+(global-set-key (kbd "<C-f2>") 'bm-toggle)
+(global-set-key (kbd "<f2>")   'bm-next)
+(global-set-key (kbd "<S-f2>") 'bm-previous)
+(setq bm-cycle-all-buffers t)
+
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(require 'rainbow-delimiters)
+(setq rainbow-delimiters-max-face-count 1)
+(set-face-attribute 'rainbow-delimiters-unmatched-face nil
+                    :foreground "orange"
+                    :underline t
+                    :weight 'bold)
+;; :inherit 'error
+(set-face-attribute 'rainbow-delimiters-depth-1-face nil
+                    :foreground 'unspecified
+                    :inherit 'default)
+
+
 ;; (define-key isearch-mode-map (kbd "<backspace>") 'stp-isearch-delete)
 ;; (define-key isearch-mode-map (kbd "<backspace>") 'isearch-delete-char)
-(setq magit-last-seen-setup-instructions "1.4.0")
+
+;; (setq magit-last-seen-setup-instructions "1.4.0")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; (require 'server)
