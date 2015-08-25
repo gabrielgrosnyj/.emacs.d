@@ -259,7 +259,7 @@
   ;; (c-set-offset 'substatement-open 0)
   (setq c-basic-offset 4)
   ;; (xgtags-mode)
-  (ggtags-mode)
+  ;; (ggtags-mode)
   ;; (irony-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
@@ -653,7 +653,8 @@
      ido-ubiquitous
      ;; number-font-lock-mode
      recentf-ext
-     ace-jump-mode
+     ;; ace-jump-mode
+     avy
      irony
      company-irony
      company
@@ -664,6 +665,7 @@
      bm
      rainbow-delimiters
      helm-ag
+     shrink-whitespace
      )))
 
 (condition-case nil
@@ -1395,11 +1397,16 @@ Position the cursor at its beginning, according to the current mode."
 ;;      (emacs-lisp . t)   
 ;;    ))
 
-(require 'ace-jump-mode)
-(set-face-foreground 'ace-jump-face-foreground "tomato")
-(global-set-key (kbd "M-A") 'ace-jump-mode)
-(global-set-key (kbd "C-+") 'ace-jump-mode)
-(setq ace-jump-mode-scope 'window)
+;; (require 'ace-jump-mode)
+;; (set-face-foreground 'ace-jump-face-foreground "tomato")
+;; (global-set-key (kbd "M-A") 'ace-jump-mode)
+;; (global-set-key (kbd "C-+") 'ace-jump-mode)
+;; (setq ace-jump-mode-scope 'window)
+(global-set-key (kbd "C-+") 'avy-goto-word-or-subword-1)
+(require 'avy)
+(setq avy-all-windows nil)
+(set-face-background 'avy-lead-face-0 "tomato")
+(set-face-foreground 'avy-lead-face-0 "white")
 
 (require 'diminish)
 (diminish 'isearch-mode (string 32 #x279c))
@@ -1470,6 +1477,9 @@ Position the cursor at its beginning, according to the current mode."
                     :foreground 'unspecified
                     :inherit 'default)
 
+(global-set-key (kbd "M-SPC") 'shrink-whitespace)
+
+;; (add-hook 'text-mode-hook #'dubcaps-mode)
 
 ;; (define-key isearch-mode-map (kbd "<backspace>") 'stp-isearch-delete)
 ;; (define-key isearch-mode-map (kbd "<backspace>") 'isearch-delete-char)
