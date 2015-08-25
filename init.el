@@ -1062,7 +1062,9 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
       (set-face-background 'helm-swoop-target-word-face "#555555")
       (set-face-attribute 'mode-line nil
-                          :box '(:line-width 2 :color "#000000")))
+                          :box '(:line-width 2 :color "#000000"))
+      (set-face-attribute 'mode-line-inactive nil
+                          :box '(:line-width 2 :color "gray80")))
   ;; Else dark theme
   (progn
     (set-face-background 'hl-line "#1A1A1A")
