@@ -655,6 +655,7 @@
      recentf-ext
      ;; ace-jump-mode
      avy
+     sublimity
      irony
      company-irony
      company
@@ -1479,6 +1480,11 @@ Position the cursor at its beginning, according to the current mode."
 
 (global-set-key (kbd "M-SPC") 'shrink-whitespace)
 
+(require 'sublimity)
+(require 'sublimity-scroll)
+(setq sublimity-scroll-weight 3
+      sublimity-scroll-drift-length 6)
+(sublimity-mode 1)
 ;; (add-hook 'text-mode-hook #'dubcaps-mode)
 
 ;; (define-key isearch-mode-map (kbd "<backspace>") 'stp-isearch-delete)
