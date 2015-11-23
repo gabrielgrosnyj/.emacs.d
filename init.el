@@ -947,6 +947,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (setq company-idle-delay 0.01)
 (setq company-minimum-prefix-length 1)
 (setq company-transformers '(company-sort-by-occurrence))
+;; (setq company-transformers nil)
 (setq company-require-match 'never)
 ;; (define-key company-mode-map (kbd "C-n") 'company-select-next)
 ;; (define-key company-mode-map (kbd "C-p") 'company-select-previous)
@@ -956,6 +957,11 @@ If REGEXP is non-nil, treat STRING as a regular expression."
                          (company-dabbrev-code :with company-yasnippet company-keywords)
                          company-nxml company-cmake
                          company-files))
+
+;; (setq company-backends '((company-elisp :with company-yasnippet) 
+;;                          (company-gtags :with company-yasnippet company-keywords)
+;;                          company-nxml company-cmake
+;;                          company-files))
 
 (defun stp-company-irony (command &optional arg &rest ignored)
   (interactive (list 'interactive))
