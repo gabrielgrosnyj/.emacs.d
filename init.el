@@ -1,3 +1,5 @@
+(set 'gc-cons-threshold 10000000)
+
 (prefer-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
 ;; (set-keyboard-coding-system 'utf-8)
@@ -254,12 +256,28 @@
 (setq-default indent-tabs-mode nil)
 (setq-default c-hungry-delete-key t)
 
+;C/C++ indentation
+(c-add-style "stp-style"
+             '((c-comment-only-line-offset . 0)
+               (c-hanging-braces-alist . ((substatement-open before after)))
+               (c-offsets-alist . ((topmost-intro        . 0)
+                                   (topmost-intro-cont   . 0)
+                                   (substatement         . 4)
+                                   (substatement-open    . 0)
+                                   (statement-case-open  . 4)
+                                   (statement-cont       . 4)
+                                   (access-label         . -4)
+                                   (inclass              . 4)
+                                   (inline-open          . 0)
+                                   ))))
+
 (defun my-c++-mode-hook ()
-  (c-set-style "ellemtel")
+  ;; (c-set-style "ellemtel")
+  (c-set-style "stp-style")
   ;; (c-set-offset 'substatement-open 0)
-  (setq c-basic-offset 4)
+  ;; (setq c-basic-offset 4)
   ;; (xgtags-mode)
-  ;; (ggtags-mode)
+  (ggtags-mode)
   ;; (irony-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
@@ -655,7 +673,7 @@
      recentf-ext
      ;; ace-jump-mode
      avy
-     sublimity
+     ;; sublimity
      irony
      company-irony
      company
@@ -763,7 +781,7 @@
 
 
 (defun* ag/search (string directory
-                          &key (regexp nil) (file-regex nil))
+                          &key (regexp nil) (file-regex nil) (file-type nil))
   "Run ag searching for the STRING given in DIRECTORY.
 If REGEXP is non-nil, treat STRING as a regular expression."
   (let ((default-directory (file-name-as-directory directory))
@@ -780,19 +798,37 @@ If REGEXP is non-nil, treat STRING as a regular expression."
     (setq arguments (append '("--line-number") arguments))
     (when (char-or-string-p file-regex)
       (setq arguments (append `("--file-search-regex" ,file-regex) arguments)))
+    (when file-type
+      (setq arguments (cons (format "--%s" file-type) arguments)))
+    (when ag-ignore-list
+      (setq arguments (append (ag/format-ignore ag-ignore-list) arguments)))
     (unless (file-exists-p default-directory)
       (error "No such directory %s" default-directory))
-    (compilation-start
-     (mapconcat 'shell-quote-argument
-                (append (list ag-exe) arguments (list string))
-                ;; (append '("ag") arguments (list string "."))
-                " ")
-     'ag-mode
-     `(lambda (mode-name) ,(ag/buffer-name string directory regexp)))))
+    (let ((command-string
+           (mapconcat #'shell-quote-argument
+                      (append (list ag-executable) arguments (list string "."))
+                      " ")))
+      ;; If we're called with a prefix, let the user modify the command before
+      ;; running it. Typically this means they want to pass additional arguments.
+      (when current-prefix-arg
+        ;; Make a space in the command-string for the user to enter more arguments.
+        (setq command-string (ag/replace-first command-string " -- " "  -- "))
+        ;; Prompt for the command.
+        (let ((adjusted-point (- (length command-string) (length string) 5)))
+          (setq command-string
+                (read-from-minibuffer "ag command: "
+                                      (cons command-string adjusted-point)))))
+      (compilation-start
+       (mapconcat 'shell-quote-argument
+                  (append (list ag-exe) arguments (list string))
+                  ;; (append '("ag") arguments (list string "."))
+                  " ")
+       'ag-mode
+       `(lambda (mode-name) ,(ag/buffer-name string directory regexp))))))
 
 
 ;; TEMPORARY while magit is in a limbo mode
-;; (setq magit-emacsclient-executable "e:/dev/emacs-24.3/bin/emacsclient.exe")
+;; (setq magit-emacsclient-executable "e:/dev/emacs-24.5/bin/emacsclient.exe")
 
 (projectile-global-mode)
 (setq projectile-indexing-method 'alien)
@@ -1024,6 +1060,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (require 'helm-ag)
 (setq helm-ag-insert-at-point 'symbol)
 (global-set-key (kbd "C-*") 'helm-ag-pop-stack)
+(setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case --line-number")
 
 (set-face-attribute 'helm-moccur-buffer nil
                     :foreground "gray60"
@@ -1045,9 +1082,13 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (global-set-key (kbd "C-M-S-s") 'helm-swoop-back-to-last-point)
 (define-key isearch-mode-map (kbd "C-S-s") 'helm-swoop-from-isearch)
 (setq helm-swoop-split-direction 'split-window-horizontally)
-(require 'helm-match-plugin)
+;; (require 'helm-match-plugin)
 
-(if t
+(global-set-key (kbd "C-+") 'avy-goto-word-or-subword-1)
+(require 'avy)
+(setq avy-all-windows nil)
+
+(if nil
     ;; Light theme
     (progn 
       (require 'minimal-light-theme)
@@ -1064,19 +1105,26 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       (set-face-attribute 'mode-line nil
                           :box '(:line-width 2 :color "#000000"))
       (set-face-attribute 'mode-line-inactive nil
-                          :box '(:line-width 2 :color "gray80")))
+                          :box '(:line-width 2 :color "gray80"))
+      (set-face-background 'avy-lead-face-0 "tomato")
+      (set-face-foreground 'avy-lead-face-0 "white"))
   ;; Else dark theme
   (progn
     (set-face-background 'hl-line "#1A1A1A")
     (require 'latezen-theme)
+    (set-cursor-color "salmon")
     (set-face-background 'helm-selection "#2A2A2A")
     (set-face-foreground 'helm-swoop-target-line-face "#888888")
     (set-face-background 'helm-swoop-target-line-face "#2A2A2A")
     (set-face-foreground 'helm-swoop-target-word-face "#DDDDDD")
     (set-face-background 'helm-swoop-target-word-face "#555555")
     (set-face-foreground 'helm-match "#DDDDDD")
-    (set-face-background 'helm-match "#111111"))
-)
+    (set-face-background 'helm-match "#111111")
+    (set-face-background 'avy-lead-face "#CCCCCC")
+    (set-face-foreground 'avy-lead-face "black")
+    (set-face-background 'avy-lead-face-0 "#CCCCCC")
+    (set-face-foreground 'avy-lead-face-0 "black"))
+  )
 ;; (require 'light-soap-theme)
 
 (require 'w32-fullscreen)
@@ -1405,11 +1453,6 @@ Position the cursor at its beginning, according to the current mode."
 ;; (global-set-key (kbd "M-A") 'ace-jump-mode)
 ;; (global-set-key (kbd "C-+") 'ace-jump-mode)
 ;; (setq ace-jump-mode-scope 'window)
-(global-set-key (kbd "C-+") 'avy-goto-word-or-subword-1)
-(require 'avy)
-(setq avy-all-windows nil)
-(set-face-background 'avy-lead-face-0 "tomato")
-(set-face-foreground 'avy-lead-face-0 "white")
 
 (require 'diminish)
 (diminish 'isearch-mode (string 32 #x279c))
@@ -1482,11 +1525,11 @@ Position the cursor at its beginning, according to the current mode."
 
 (global-set-key (kbd "M-SPC") 'shrink-whitespace)
 
-(require 'sublimity)
-(require 'sublimity-scroll)
-(setq sublimity-scroll-weight 3
-      sublimity-scroll-drift-length 6)
-(sublimity-mode 1)
+;; (require 'sublimity)
+;; (require 'sublimity-scroll)
+;; (setq sublimity-scroll-weight 3
+;;       sublimity-scroll-drift-length 6)
+;; (sublimity-mode 1)
 ;; (add-hook 'text-mode-hook #'dubcaps-mode)
 
 ;; (define-key isearch-mode-map (kbd "<backspace>") 'stp-isearch-delete)
