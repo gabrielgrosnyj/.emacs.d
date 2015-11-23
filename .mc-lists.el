@@ -13,10 +13,12 @@
         c-electric-paren
         c-electric-pound
         c-electric-semi&comma
+        c-electric-slash
         c-electric-star
         c-indent-line-or-region
         c-up-conditional
         comment-dwim
+        comment-or-uncomment-region-or-line
         cua-insert-char-rectangle
         cua-paste
         down-list
@@ -27,6 +29,7 @@
         forward-sexp
         ido-execute-command
         indent-for-tab-command
+        indent-rigidly
         kill-region
         kill-sexp
         mark-sexp
@@ -53,6 +56,7 @@
         stp-decorate-cast
         stp-decorate-move
         stp-decorate-shared-ptr
+        stp-decorate-unique-ptr
         wdired-finish-edit
         yas-expand
         yas/expand
@@ -63,6 +67,7 @@
         c-mark-function
         describe-key-briefly
         ff-find-related-file
+        helm-show-kill-ring
         ido-switch-buffer
         kill-sentence
         minimap-toggle
