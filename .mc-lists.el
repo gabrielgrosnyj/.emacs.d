@@ -21,6 +21,7 @@
         comment-or-uncomment-region-or-line
         cua-insert-char-rectangle
         cua-paste
+        dabbrev-expand
         down-list
         electric-newline-and-maybe-indent
         eval-last-sexp

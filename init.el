@@ -795,7 +795,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
     (if ag-highlight-search
         (setq arguments (append '("--color" "--color-match" "30;43") arguments))
       (setq arguments (append '("--nocolor") arguments)))
-    (setq arguments (append '("--line-number") arguments))
+    (setq arguments (append '("--ignore" "*.pdf" "--ignore" "*.pgm" "--line-number") arguments))
     (when (char-or-string-p file-regex)
       (setq arguments (append `("--file-search-regex" ,file-regex) arguments)))
     (when file-type
@@ -1066,7 +1066,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (require 'helm-ag)
 (setq helm-ag-insert-at-point 'symbol)
 (global-set-key (kbd "C-*") 'helm-ag-pop-stack)
-(setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case --line-number")
+(setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case --line-number --ignore *.pdf --ignore *.pgm")
 
 (set-face-attribute 'helm-moccur-buffer nil
                     :foreground "gray60"
@@ -1116,7 +1116,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       (set-face-foreground 'avy-lead-face-0 "white"))
   ;; Else dark theme
   (progn
-    (set-face-background 'hl-line "#1A1A1A")
+    (set-face-background 'hl-line "#171717")
     (require 'latezen-theme)
     (set-cursor-color "salmon")
     (set-face-background 'helm-selection "#2A2A2A")
