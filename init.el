@@ -293,6 +293,7 @@
   (local-set-key (kbd "C-c v") 'stp-decorate-vector)
   (local-set-key (kbd "C-c i") 'stp-decorate-include)
   (local-set-key (kbd "C-c c") 'stp-decorate-cast)
+  (local-set-key (kbd "C-c f") 'stp-fun-param-line)
   (local-set-key (kbd "C-c w") 'stp-align-indent))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
 
@@ -1116,8 +1117,8 @@ If REGEXP is non-nil, treat STRING as a regular expression."
       (set-face-foreground 'avy-lead-face-0 "white"))
   ;; Else dark theme
   (progn
-    (set-face-background 'hl-line "#171717")
     (require 'latezen-theme)
+    (set-face-background 'hl-line "#171717")
     (set-cursor-color "salmon")
     (set-face-background 'helm-selection "#2A2A2A")
     (set-face-foreground 'helm-swoop-target-line-face "#888888")
@@ -1264,6 +1265,41 @@ If REGEXP is non-nil, treat STRING as a regular expression."
           ;; (forward-char len)
           ))
       )))
+
+(defun stp-fun-param (sfrom sto)
+  (ignore-errors
+    (save-excursion
+      (unless (memq (char-after) '(?\( ?{))
+        (backward-up-list))
+      (mark-sexp)
+      (let (from to str out len)
+        (setq from (region-beginning)
+              to (region-end))
+        (setq str (buffer-substring from to))
+        (delete-region from to)
+        (goto-char from)
+        (setq out (replace-regexp-in-string sfrom sto str))
+        (insert out)
+        (exchange-point-and-mark)
+        (setq from (region-beginning)
+              to (region-end))
+        (indent-region from to)
+        ))))
+
+(defun stp-fun-param-multi-line ()
+  (interactive)
+  (stp-fun-param ",[ ]*\\([^\n ]\\)" ",\n\\1"))
+
+(defun stp-fun-param-one-line ()
+  (interactive)
+  (stp-fun-param ",\n[ ]*" ", "))
+
+
+(defun stp-fun-param-line (x)
+  (interactive "P")
+  (if x
+      (stp-fun-param-one-line)
+    (stp-fun-param-multi-line)))
 
 (when (eq 'windows-nt system-type)
   (setq woman-manpath '("c:/MinGW/msys/1.0/share/man" "c:/MinGW/opt/share/man"))
