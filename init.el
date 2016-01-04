@@ -1567,6 +1567,16 @@ Position the cursor at its beginning, according to the current mode."
 
 (global-set-key (kbd "M-SPC") 'shrink-whitespace)
 
+;; When popping the mark, continue popping until the cursor
+;; actually moves
+(defadvice pop-to-mark-command (around ensure-new-position activate)
+  (let ((p (point)))
+    (dotimes (i 10)
+      (when (= p (point)) ad-do-it))))
+
+(setq set-mark-command-repeat-pop t)
+
+(setq search-whitespace-regexp ".*?")
 ;; (require 'sublimity)
 ;; (require 'sublimity-scroll)
 ;; (setq sublimity-scroll-weight 3
