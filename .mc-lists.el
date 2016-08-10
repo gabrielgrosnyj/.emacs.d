@@ -23,6 +23,7 @@
         cua-paste
         dabbrev-expand
         down-list
+        downcase-region
         electric-newline-and-maybe-indent
         eval-last-sexp
         eval-print-last-sexp
@@ -44,6 +45,7 @@
         org-force-self-insert
         org-self-insert-command
         prelude-duplicate-current-line-or-region
+        shrink-whitespace
         smart-open-line
         smart-open-line-above
         smart-open-line-above
@@ -58,6 +60,8 @@
         stp-decorate-move
         stp-decorate-shared-ptr
         stp-decorate-unique-ptr
+        stp-fun-param-line
+        upcase-region
         wdired-finish-edit
         yas-expand
         yas/expand
