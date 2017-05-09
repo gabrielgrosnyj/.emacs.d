@@ -6,6 +6,8 @@
         anchored-transpose
         backward-sexp
         backward-up-list
+        beginning-of-buffer
+        c-beginning-of-defun
         c-electric-brace
         c-electric-colon
         c-electric-delete-forward
@@ -19,12 +21,14 @@
         c-up-conditional
         comment-dwim
         comment-or-uncomment-region-or-line
+        csharp-maybe-insert-codedoc
         cua-insert-char-rectangle
         cua-paste
         dabbrev-expand
         down-list
         downcase-region
         electric-newline-and-maybe-indent
+        end-of-defun
         eval-last-sexp
         eval-print-last-sexp
         fill-paragraph
@@ -36,14 +40,17 @@
         kill-sexp
         mark-sexp
         move-text-down
+        my-move-back-list
         my-move-forward-list
         next-error
         nxml-electric-slash
         org-backward-sentence
+        org-beginning-of-line
         org-delete-char
         org-end-of-line
         org-force-self-insert
         org-self-insert-command
+        org-yank
         prelude-duplicate-current-line-or-region
         shrink-whitespace
         smart-open-line
@@ -61,6 +68,8 @@
         stp-decorate-shared-ptr
         stp-decorate-unique-ptr
         stp-fun-param-line
+        transpose-sexps
+        transpose-words
         upcase-region
         wdired-finish-edit
         yas-expand
@@ -71,6 +80,7 @@
       '(
         c-mark-function
         describe-key-briefly
+        eval-expression
         ff-find-related-file
         helm-show-kill-ring
         ido-switch-buffer

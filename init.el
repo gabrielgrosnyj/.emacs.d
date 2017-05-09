@@ -1,4 +1,4 @@
-(set 'gc-cons-threshold 10000000)
+(set 'gc-cons-threshold 30000000)
 
 (prefer-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
@@ -6,6 +6,9 @@
 ;; (set-terminal-coding-system 'utf-8)
 
 (setq-default cursor-in-non-selected-windows nil)
+
+(setq show-paren-delay 1)
+(setq blink-matching-paren nil)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -44,8 +47,8 @@
                                      "Source Code Pro"
                                    "Droid Sans Mono"))))))
 
-(setq indicate-empty-lines t)
-(setq system-time-locale "C")
+;; (setq indicate-empty-lines t)
+;; (setq system-time-locale "C")
 
 ;; (setq grep-hit-face font-lock-type-face) ;; font-lock-keyword-face)
 (setq grep-hit-face  font-lock-keyword-face)
@@ -61,7 +64,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 (global-auto-revert-mode)
-(global-prettify-symbols-mode)
+;; (global-prettify-symbols-mode)
 
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -144,13 +147,20 @@
 ;; (global-set-key (kbd "<C-return>") 'hippie-expand)
 
 (global-set-key (kbd "C-M-j") 'join-line)
-(global-set-key (kbd "M-Ê") 'hippie-expand)
+(global-set-key (kbd "M-√¶") 'hippie-expand)
 
 (defun my-move-forward-list ()
   (interactive)
+  (push-mark)
   (backward-up-list -1))
 
-(global-set-key (kbd "C-M-Ê") 'my-move-forward-list)
+(defun my-move-back-list ()
+  (interactive)
+  (push-mark)
+  (backward-up-list))
+
+(global-set-key (kbd "C-M-√¶") 'my-move-forward-list)
+(global-set-key (kbd "C-M-u") 'my-move-back-list)
 
 (setq dired-dwim-target t
       dired-recursive-copies t
@@ -182,7 +192,7 @@
 (add-hook 'nxml-mode-hook 'my-nxml-mode-indent-setup)
 
 (setq exec-path (cons "~/.emacs.d/bin" exec-path))
-(setq exec-path (cons "~/.emacs.d/plugins/telli" exec-path))
+;; (setq exec-path (cons "~/.emacs.d/plugins/telli" exec-path))
 (setenv "PATH" (concat (getenv "HOME") "/.emacs.d/bin;"
                        (getenv "PATH")))
 
@@ -277,17 +287,20 @@
   ;; (c-set-offset 'substatement-open 0)
   ;; (setq c-basic-offset 4)
   ;; (xgtags-mode)
-  (ggtags-mode)
+  ;; (ggtags-mode)
   ;; (irony-mode)
   ;; (highlight-symbol-mode)
   ;; (setq highlight-symbol-nav-mode t)
   ;; (local-set-key (kbd "C-M-z") 'sp-slurp-hybrid-sexp)
+  (local-set-key (kbd "C-M-e") 'c-end-of-defun)
   (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
+  (local-set-key (kbd "`") 'sp-slurp-hybrid-sexp)
   (local-set-key (kbd "RET") 'newline-and-indent)
   ;; (local-set-key (kbd "<C-return>") 'stp-company-irony)
   (local-set-key (kbd "C-c r") 'ff-find-related-file)
   (local-set-key (kbd "C-c u") 'stp-decorate-unique-ptr)
   (local-set-key (kbd "C-c s") 'stp-decorate-shared-ptr)
+  (local-set-key (kbd "C-c W") 'stp-decorate-weak-ptr)
   (local-set-key (kbd "C-c m") 'stp-decorate-move)
   (local-set-key (kbd "C-c a") 'stp-decorate-atomic)
   (local-set-key (kbd "C-c v") 'stp-decorate-vector)
@@ -296,6 +309,15 @@
   (local-set-key (kbd "C-c f") 'stp-fun-param-line)
   (local-set-key (kbd "C-c w") 'stp-align-indent))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+(defun stp-csharp-mode-hook ()
+  (setq csharp-want-imenu nil)
+  (local-set-key (kbd "M-.") 'omnisharp-go-to-definition)
+  (local-set-key (kbd "C-c p A") 'omnisharp-helm-find-usages)
+  (local-set-key (kbd "C-M-+") 'sp-slurp-hybrid-sexp)
+  (local-set-key (kbd "C-c f") 'stp-fun-param-line))
+
+(add-hook 'csharp-mode-hook 'stp-csharp-mode-hook)
 
 ;; (add-hook 'c-mode-hook 'irony-mode)
 
@@ -343,7 +365,7 @@
 (setq auto-mode-alist
 	  (append '(("\\.csproj$" . nxml-mode)) auto-mode-alist))
 
-(setq ffap-c-path '("." "../include" "../ffmpeg/include" "C:/Program Files (x86)/Microsoft Visual Studio 11.0/VC/INCLUDE"))
+(setq ffap-c-path '("." "../include" "../ffmpeg/include" "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/INCLUDE"))
 (setq cc-search-directories '("." "../include" "../*"))
 
 ;; (defun ac-cc-mode-setup ()
@@ -468,42 +490,44 @@
     (expand-file-name filename)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun move-text-internal (arg)
-  (cond
-   ((and mark-active transient-mark-mode)
-    (if (> (point) (mark))
-        (exchange-point-and-mark))
-    (let ((column (current-column))
-          (text (delete-and-extract-region (point) (mark))))
-      (forward-line arg)
-      (move-to-column column t)
-      (set-mark (point))
-      (insert text)
-      (exchange-point-and-mark)
-      (setq deactivate-mark nil)))
-   (t
-    (let ((column (current-column)))
-      (beginning-of-line)
-      (when (or (> arg 0) (not (bobp)))
-        (forward-line)
-        (when (or (< arg 0) (not (eobp)))
-          (transpose-lines arg))
-        (when (< arg 0)
-          (forward-line -1))
-        (forward-line -1))
-      (move-to-column column t)))))
+;; (require 'move-text)
 
-(defun move-text-down (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines down."
-  (interactive "*p")
-  (move-text-internal arg))
+;; (defun move-text-internal (arg)
+;;   (cond
+;;    ((and mark-active transient-mark-mode)
+;;     (if (> (point) (mark))
+;;         (exchange-point-and-mark))
+;;     (let ((column (current-column))
+;;           (text (delete-and-extract-region (point) (mark))))
+;;       (forward-line arg)
+;;       (move-to-column column t)
+;;       (set-mark (point))
+;;       (insert text)
+;;       (exchange-point-and-mark)
+;;       (setq deactivate-mark nil)))
+;;    (t
+;;     (let ((column (current-column)))
+;;       (beginning-of-line)
+;;       (when (or (> arg 0) (not (bobp)))
+;;         (forward-line)
+;;         (when (or (< arg 0) (not (eobp)))
+;;           (transpose-lines arg))
+;;         (when (< arg 0)
+;;           (forward-line -1))
+;;         (forward-line -1))
+;;       (move-to-column column t)))))
 
-(defun move-text-up (arg)
-  "Move region (transient-mark-mode active) or current line
-  arg lines up."
-  (interactive "*p")
-  (move-text-internal (- arg)))
+;; (defun move-text-down (arg)
+;;   "Move region (transient-mark-mode active) or current line
+;;   arg lines down."
+;;   (interactive "*p")
+;;   (move-text-internal arg))
+
+;; (defun move-text-up (arg)
+;;   "Move region (transient-mark-mode active) or current line
+;;   arg lines up."
+;;   (interactive "*p")
+;;   (move-text-internal (- arg)))
 
 (global-set-key [(meta shift p)] 'move-text-up) 
 (global-set-key [(meta shift n)] 'move-text-down) 
@@ -646,6 +670,7 @@
      flx-ido
      yasnippet
      smartparens
+     move-text
      ido-vertical-mode
      guide-key
      wgrep
@@ -661,10 +686,10 @@
      ess
      undo-tree
      projectile
-     expand-region
-     change-inner
+     ;; expand-region
+     ;; change-inner
      multiple-cursors
-     minimap
+     ;; minimap
      buffer-move
      helm
      ;; helm-swoop
@@ -683,9 +708,11 @@
      csharp-mode
      fullframe
      bm
-     rainbow-delimiters
+     ;; rainbow-delimiters
      helm-ag
      shrink-whitespace
+     ;; fuzzy-format
+     dtrt-indent
      )))
 
 (condition-case nil
@@ -694,9 +721,9 @@
    (package-refresh-contents)
    (init--install-packages)))
 
-(require 'change-inner)
-(global-set-key (kbd "M-i") 'change-inner)
-(global-set-key (kbd "M-o") 'change-outer)
+;; (require 'change-inner)
+;; (global-set-key (kbd "M-i") 'change-inner)
+;; (global-set-key (kbd "M-o") 'change-outer)
 
 (require 'undo-tree)
 (global-undo-tree-mode)
@@ -796,7 +823,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
     (if ag-highlight-search
         (setq arguments (append '("--color" "--color-match" "30;43") arguments))
       (setq arguments (append '("--nocolor") arguments)))
-    (setq arguments (append '("--ignore" "*.pdf" "--ignore" "*.pgm" "--line-number") arguments))
+    (setq arguments (append '("--ignore" "*.pdf" "--ignore" "*.pgm" "--ignore" "*.opendb" "--line-number") arguments))
     (when (char-or-string-p file-regex)
       (setq arguments (append `("--file-search-regex" ,file-regex) arguments)))
     (when file-type
@@ -982,25 +1009,25 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (global-set-key [(control meta shift m)] 'mc/unmark-next-like-this)
 (global-set-key (kbd "C-M-n") 'mc/skip-to-next-like-this)
 (global-set-key (kbd "C-M-,") 'mc/mark-all-symbols-like-this-in-defun)
-(global-set-key (kbd "C-Ê") 'er/expand-region)
-(global-set-key (kbd "C-∆") 'er/contract-region)
+(global-set-key (kbd "C-√¶") 'er/expand-region)
+(global-set-key (kbd "C-√Ü") 'er/contract-region)
 
-(defun minimap-toggle ()
-  "Toggle minimap for current buffer."
-  (interactive)
-  (if (not (boundp 'minimap-bufname))
-      (setf minimap-bufname nil))
-  (if (null minimap-bufname)
-      (minimap-create)
-    (progn 
-      (minimap-kill)
-      (balance-windows))
-    ))
+;; (defun minimap-toggle ()
+;;   "Toggle minimap for current buffer."
+;;   (interactive)
+;;   (if (not (boundp 'minimap-bufname))
+;;       (setf minimap-bufname nil))
+;;   (if (null minimap-bufname)
+;;       (minimap-create)
+;;     (progn 
+;;       (minimap-kill)
+;;       (balance-windows))
+;;     ))
 
-(global-set-key [(meta shift m)] 'minimap-toggle)
+;; (global-set-key [(meta shift m)] 'minimap-toggle)
 
-(require 'ess-site)
-(setq inferior-R-program-name "c:/Program Files/R/R-3.0.2/bin/i386/Rtermsetup.exe")
+;; (require 'ess-site)
+;; (setq inferior-R-program-name "c:/Program Files/R/R-3.0.2/bin/i386/Rtermsetup.exe")
 
 (require 'tex-mik)
 
@@ -1067,7 +1094,7 @@ If REGEXP is non-nil, treat STRING as a regular expression."
 (require 'helm-ag)
 (setq helm-ag-insert-at-point 'symbol)
 (global-set-key (kbd "C-*") 'helm-ag-pop-stack)
-(setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case --line-number --ignore *.pdf --ignore *.pgm")
+(setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case --line-number --ignore *.pdf --ignore *.pgm --ignore *.opendb --ignore TAGS")
 
 (set-face-attribute 'helm-moccur-buffer nil
                     :foreground "gray60"
@@ -1081,19 +1108,26 @@ If REGEXP is non-nil, treat STRING as a regular expression."
                     :weight 'bold)
 
 (require 'helm-swoop)
+
 (defun stp-helm-swoop ()
   (interactive)
   (push-mark)
   (helm-swoop))
 (global-set-key (kbd "C-S-s") 'stp-helm-swoop)
 (global-set-key (kbd "C-M-S-s") 'helm-swoop-back-to-last-point)
+(setq isearch-lazy-highlight t)
+(setq lazy-highlight-initial-delay 0.5)
+(setq lazy-highlight-interval 0.5)
+(global-set-key (kbd "‚Ç¨") 'end-of-defun)
 (define-key isearch-mode-map (kbd "C-S-s") 'helm-swoop-from-isearch)
 (setq helm-swoop-split-direction 'split-window-horizontally)
 ;; (require 'helm-match-plugin)
 
+;; (global-set-key (kbd "C-+") 'avy-goto-char)
 (global-set-key (kbd "C-+") 'avy-goto-word-or-subword-1)
 (require 'avy)
 (setq avy-all-windows nil)
+(setq avy-background t)
 
 (if nil
     ;; Light theme
@@ -1127,10 +1161,10 @@ If REGEXP is non-nil, treat STRING as a regular expression."
     (set-face-background 'helm-swoop-target-word-face "#555555")
     (set-face-foreground 'helm-match "#DDDDDD")
     (set-face-background 'helm-match "#111111")
-    (set-face-background 'avy-lead-face "#CCCCCC")
-    (set-face-foreground 'avy-lead-face "black")
-    (set-face-background 'avy-lead-face-0 "#CCCCCC")
-    (set-face-foreground 'avy-lead-face-0 "black"))
+    (set-face-background 'avy-lead-face "black")
+    (set-face-foreground 'avy-lead-face "tomato")
+    (set-face-background 'avy-lead-face-0 "black")
+    (set-face-foreground 'avy-lead-face-0 "tomato"))
   )
 ;; (require 'light-soap-theme)
 
@@ -1206,13 +1240,23 @@ If REGEXP is non-nil, treat STRING as a regular expression."
         (delete-char 1))
     ))
 
-(defun stp-decorate-unique-ptr ()
-  (interactive)
-  (stp-decorate-ptr "std::unique_ptr<" ">"))
+(defun stp-decorate-unique-ptr (x)
+  (interactive "P")
+  (if x
+      (stp-undecorate-region "std::unique_ptr<" ">")
+    (stp-decorate-ptr "std::unique_ptr<" ">")))
 
-(defun stp-decorate-shared-ptr ()
-  (interactive)
-  (stp-decorate-ptr "std::shared_ptr<" ">"))
+(defun stp-decorate-shared-ptr (x)
+  (interactive "P")
+  (if x
+      (stp-undecorate-region "std::shared_ptr<" ">")
+    (stp-decorate-ptr "std::shared_ptr<" ">")))
+
+(defun stp-decorate-weak-ptr (x)
+  (interactive "P")
+  (if x
+      (stp-undecorate-region "std::weak_ptr<" ">")
+    (stp-decorate-ptr "std::weak_ptr<" ">")))
 
 
 (defun stp-decorate-cast ()
@@ -1456,7 +1500,7 @@ Position the cursor at its beginning, according to the current mode."
 ;; ;; (require 'ox-odt)
 ;; (require 'org-latex)
 
-;; (setq user-full-name "Stef·n PÈtursson")
+;; (setq user-full-name "Stef√°n P√©tursson")
 ;; (setq org-export-latex-format-toc-function (lambda (bla)))
 ;; (add-to-list 'org-export-latex-classes
 ;;   '("stp-org-article"
@@ -1508,7 +1552,7 @@ Position the cursor at its beginning, according to the current mode."
 (eval-after-load "rainbow-mode"
   '(diminish 'rainbow-mode))
 
-(setq tags-table-list '("~/VCTAGS" "c:/Qt/5.1.1/msvc2012/include/TAGS"))
+;; (setq tags-table-list '("~/VCTAGS" "c:/Qt/5.1.1/msvc2012/include/TAGS"))
 
 (defun stp-align-indent ()
   (interactive)
@@ -1553,17 +1597,17 @@ Position the cursor at its beginning, according to the current mode."
 (global-set-key (kbd "<S-f2>") 'bm-previous)
 (setq bm-cycle-all-buffers t)
 
-(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-(require 'rainbow-delimiters)
-(setq rainbow-delimiters-max-face-count 1)
-(set-face-attribute 'rainbow-delimiters-unmatched-face nil
-                    :foreground "orange"
-                    :underline t
-                    :weight 'bold)
+;; (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+;; (require 'rainbow-delimiters)
+;; (setq rainbow-delimiters-max-face-count 1)
+;; (set-face-attribute 'rainbow-delimiters-unmatched-face nil
+;;                     :foreground "orange"
+;;                     :underline t
+;;                     :weight 'bold)
 ;; :inherit 'error
-(set-face-attribute 'rainbow-delimiters-depth-1-face nil
-                    :foreground 'unspecified
-                    :inherit 'default)
+;; (set-face-attribute 'rainbow-delimiters-depth-1-face nil
+;;                     :foreground 'unspecified
+;;                     :inherit 'default)
 
 (global-set-key (kbd "M-SPC") 'shrink-whitespace)
 
@@ -1642,6 +1686,25 @@ Position the cursor at its beginning, according to the current mode."
 ;; 	  (setq tags-completion-table nil)
 ;; 	  (tags-completion-table)))
 ;;     ))
+
+(defun refresh-tags()
+  (interactive)
+  (shell-command "hg locate *.cs *.cpp *.h > tmp-files")
+  (shell-command "etags -L tmp-files")
+  (if (boundp 'tags-completion-table)
+      (progn
+        (setq tags-completion-table nil)
+        (tags-completion-table))))
+
+(require 'dtrt-indent)
+(dtrt-indent-mode t)
+
+(setq omnisharp-server-executable-path "e:/apps/omnisharp_roslyn/1161/core11/OmniSharp.exe")
+(add-hook 'csharp-mode-hook 'omnisharp-mode)
+
+;; (require 'fuzzy-format)
+;; (setq fuzzy-format-default-indent-tabs-mode nil)
+;; (global-fuzzy-format-mode t)
 
 ;; (defvar sln-buffer nil "Zeh current solution buffer")
 
@@ -1881,4 +1944,15 @@ Position the cursor at its beginning, according to the current mode."
 
 ;; (dired-get-marked-files t current-prefix-arg)
 
+
+;; (defun stp-setup-slack()
+;;   (slack-register-team
+;;    :name "Kvikna Medical"
+;;    :default t
+;;    :client-id "2316531717.109828696644"
+;;    :client-secret "49b678f78deec8c0b6a3d56060d91b2c"
+;;    :token "xoxp-2316531717-18047023233-109844001157-5e374b7fd257c6f688ede120c43e30bf"
+;;    :subscribed-channels '(  Kvikna Medical - sonar))
+;;   (setq lui-time-stamp-format "[%Y-%m-%d %H:%M:%S]")
+;; )
 
